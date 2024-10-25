@@ -11,40 +11,58 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 class AppointmentProvider with ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
   // Tesis ve hizmet listeleri
   List<Facility> _facilities = [];
   List<Facility> get facilities => _facilities;
+
   List<Bilgi> _services = [];
   List<Bilgi> get services => _services;
+
   List<Bilgi> _selectedServices = [];
   List<Bilgi> get selectedServices => _selectedServices;
+
   // Her hizmete ait saat dilimlerini saklamak için
   Map<int, List<DateTime>> _serviceTimeSlots = {};
   Map<int, List<DateTime>> get serviceTimeSlots => _serviceTimeSlots;
+
   // Her hizmetin periyot değerlerini saklamak için
   Map<int, int> _servicePeriyots = {};
   Map<int, int> get servicePeriyots => _servicePeriyots;
+
   List<Randevu> _existingAppointments = [];
   List<Randevu> get existingAppointments => _existingAppointments;
+
   DateTime? _selectedDate;
   DateTime? get selectedDate => _selectedDate;
+
   int aktifGunSayisi =
       0; // Aktif gün sayısını buraya ekleyin veya dinamik olarak alın
+
   // Seçili tesis ve hizmet ID'leri
   int? _selectedFacilityId;
   int? get selectedFacilityId => _selectedFacilityId;
-  List<int> _selectedServiceIds = [];
 
+  List<int> _selectedServiceIds = [];
   List<int> get selectedServiceIds => _selectedServiceIds;
+
   // Durum değişkenleri
   bool _showCalendar = false;
   bool get showCalendar => _showCalendar;
+
   bool _showTimeSlots = false;
   bool get showTimeSlots => _showTimeSlots;
+
   // API Token
   final String _token = '71joQRTKKC5R86NccWJzClvNFuAj07w03rB';
+
   // CalendarController
   final CalendarController calendarController = CalendarController();
+
+  // Mevcut Kullanıcı ID'si (Örnek olarak 1)
+  final int currentUserId =
+      1; // Gerçek uygulamada, bu değeri kimlik doğrulama sisteminden alın
+
   // Tesisleri API'den Çekme
   Future<void> fetchFacilities() async {
     _isLoading = true;
@@ -278,7 +296,6 @@ class AppointmentProvider with ChangeNotifier {
     }
   }
 
-////////////////////////////////////////////////////////////////////////////////////////////
   // Her hizmet için ayrı saat dilimleri oluşturma
   void generateTimeSlots() {
     if (_selectedServices.isEmpty || _selectedDate == null) return;
@@ -364,7 +381,6 @@ class AppointmentProvider with ChangeNotifier {
     notifyListeners();
   }
 
-///////////////////////////////////////////////////////////////////////////
   // Takvime Dönme Fonksiyonu
   void resetToCalendar() {
     _showTimeSlots = false;
@@ -373,25 +389,194 @@ class AppointmentProvider with ChangeNotifier {
     _servicePeriyots = {};
     notifyListeners();
   }
+
+  // Saat seçimi widget'ı için
+  Widget buildCalendar(BuildContext context) {
+    return SfCalendar(
+      controller: calendarController,
+      onSelectionChanged: (calendarSelectionDetails) {
+        DateTime? selected = calendarSelectionDetails.date;
+        if (selected == null) return;
+
+        print('Seçilen Tarih: $selected');
+
+        // Geçmiş tarihi kontrol et (bugün ve geleceği seçebilir)
+        DateTime today = DateTime.now();
+        DateTime? maxDate;
+        if (aktifGunSayisi > 0) {
+          maxDate = today.add(Duration(days: aktifGunSayisi));
+        }
+
+        if (selected.isBefore(today.subtract(const Duration(days: 1))) ||
+            (maxDate != null && selected.isAfter(maxDate))) {
+          // Geçmiş veya izin verilen maksimum tarihten sonra bir tarih seçildi
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Bu tarih seçilemez.'),
+            ),
+          );
+          return;
+        }
+
+        // Tarihi seç ve saat dilimlerini göster
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          try {
+            await selectDate(context, selected);
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Servis detayları alınamadı: $e'),
+              ),
+            );
+          }
+        });
+      },
+      view: CalendarView.month,
+      timeZone: 'Turkey Standard Time',
+      timeSlotViewSettings: const TimeSlotViewSettings(timeFormat: 'HH:mm'),
+      monthViewSettings: const MonthViewSettings(
+        showTrailingAndLeadingDates:
+            false, // Trailing ve leading tarihleri gizle
+        dayFormat: 'd',
+      ),
+      minDate: DateTime.now(),
+      maxDate: aktifGunSayisi > 0
+          ? DateTime.now().add(Duration(days: aktifGunSayisi))
+          : DateTime.now()
+              .add(const Duration(days: 365)), // aktifGunSayisi 0 ise 1 yıl
+      monthCellBuilder: (BuildContext context, MonthCellDetails details) {
+        DateTime date = details.date;
+        DateTime today = DateTime.now();
+        DateTime? maxDate;
+        if (aktifGunSayisi > 0) {
+          maxDate = today.add(Duration(days: aktifGunSayisi));
+        }
+
+        bool isSelectable = true;
+        if (date.isBefore(today.subtract(const Duration(days: 1)))) {
+          isSelectable = false;
+        } else if (maxDate != null && date.isAfter(maxDate)) {
+          isSelectable = false;
+        }
+
+        print('Date: $date, Selectable: $isSelectable');
+
+        return Container(
+          decoration: BoxDecoration(
+            color: isSelectable ? Colors.white : Colors.grey[300],
+            border: Border.all(color: Colors.grey),
+          ),
+          child: Center(
+            child: Text(
+              date.day.toString(),
+              style: TextStyle(
+                color: isSelectable ? Colors.black : Colors.grey,
+                fontWeight: isSelectable ? FontWeight.normal : FontWeight.bold,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Saat dilimlerinin rengini belirleme fonksiyonu
+  Map<String, Color> kontrolEt(int hizmetId) {
+    Map<String, Color> saatDurumlari = {};
+
+    // Belirli bir hizmet için saat dilimlerini al
+    List<DateTime> timeSlots = _serviceTimeSlots[hizmetId] ?? [];
+
+    // Hizmet bilgilerini al
+    Bilgi? service = _selectedServices.firstWhere((s) =>
+        s.hizmetId ==
+        hizmetId); //firstWhereOrNull((s) => s.hizmetId == hizmetId);
+
+    bool isServiceUnavailable = false;
+    if (service != null) {
+      if (service.saatlikKapasite == 0 || service.ozelalan == 1) {
+        isServiceUnavailable = true;
+      }
+    }
+
+    for (var timeSlot in timeSlots) {
+      String formattedTime = DateFormat('HH:mm').format(timeSlot);
+      if (isServiceUnavailable) {
+        saatDurumlari[formattedTime] = Colors.red; // Hizmet Kullanılamaz
+      } else {
+        bool isBookedByUser = _existingAppointments.any((r) =>
+            r.hizmetid == hizmetId &&
+            r.baslangicsaati == formattedTime &&
+            r.kullaniciid == currentUserId);
+
+        bool isBookedByOthers = _existingAppointments.any((r) =>
+            r.hizmetid == hizmetId &&
+            r.baslangicsaati == formattedTime &&
+            r.kullaniciid != currentUserId);
+
+        if (isBookedByUser) {
+          saatDurumlari[formattedTime] =
+              Colors.green; // Kullanıcı tarafından alınmış
+        } else if (isBookedByOthers) {
+          saatDurumlari[formattedTime] =
+              Colors.red; // Başkaları tarafından alınmış
+        } else {
+          saatDurumlari[formattedTime] = Colors.blue.shade100; // Müsait
+        }
+      }
+    }
+
+    return saatDurumlari;
+  }
+
+  // Saat Dilimini Seçme Fonksiyonu
+  void selectTimeSlot(DateTime timeSlot, int serviceId) {
+    // Öncelikle hizmetin saatlik kapasitesini kontrol edin
+    Bilgi? service = _selectedServices.firstWhere((s) =>
+        s.hizmetId ==
+        serviceId); //firstWhereOrNull((s) => s.hizmetId == serviceId);
+
+    if (service == null) {
+      // Hizmet bulunamadı, hata mesajı gösterebilirsiniz
+      return;
+    }
+
+    if (service.saatlikKapasite == 0 || service.ozelalan == 1) {
+      // Bu hizmet için randevu alınamaz
+      // Kullanıcıya bilgi verebilirsiniz
+      return;
+    }
+
+    // Burada randevu oluşturma işlemini gerçekleştirin
+    // Örneğin, API'ye randevu oluşturma isteği gönderin
+
+    // Örnek olarak, randevuyu mevcut randevulara ekleyelim
+    String formattedTime = DateFormat('HH:mm').format(timeSlot);
+    Randevu newAppointment = Randevu(
+      baslangictarihi: timeSlot,
+      bitistarihi:
+          timeSlot.add(Duration(minutes: _servicePeriyots[serviceId]!)),
+      formatlibaslangictarihi:
+          DateFormat('dd.MM.yyyy').format(timeSlot), // Formatlı tarih
+      formatlibitistarihi: DateFormat('dd.MM.yyyy').format(
+          timeSlot.add(Duration(minutes: _servicePeriyots[serviceId]!))),
+      baslangicsaati: formattedTime,
+      bitissaati: DateFormat('HH:mm').format(
+          timeSlot.add(Duration(minutes: _servicePeriyots[serviceId]!))),
+      kullaniciid: currentUserId,
+      hizmetid: serviceId,
+      hizmetad:
+          _selectedServices.firstWhere((s) => s.hizmetId == serviceId).hizmetAd,
+      kapasite: _selectedServices
+          .firstWhere((s) => s.hizmetId == serviceId)
+          .saatlikKapasite,
+    );
+
+    _existingAppointments.add(newAppointment);
+    generateTimeSlots(); // Saat dilimlerini yeniden oluştur
+    notifyListeners();
+
+    // Randevu oluşturulduktan sonra kullanıcıya bildirim gönderin
+    // Örneğin, bir SnackBar gösterin veya başka bir UI güncellemesi yapın
+  }
 }
-
-
-///////////////////////////////////
-///randevu 
-
-// Future<void> fetchRandevular(DateTime selectedDate) async {
-//   try {
-//     // API'den randevu verilerini alın (örnek URL ve method, bunu kendi API'nize göre düzenleyin)
-//     final response = await http.get(Uri.parse('https://demo.gecis360.com/api/login/index.php'));
-//     if (response.statusCode == 200) {
-//       // JSON verisini çözümleyin
-//       Map<String, dynamic> jsonData = json.decode(response.body);
-//       randevu = List<Randevu>.from(jsonData['randevu'].map((x) => Randevu.fromMap(x))).toList();
-//       notifyListeners(); // Dinleyicilere güncellemeyi bildirin
-//     } else {
-//       throw Exception('Randevular alınamadı');
-//     }
-//   } catch (error) {
-//     print('Hata: $error');
-//   }
-// }

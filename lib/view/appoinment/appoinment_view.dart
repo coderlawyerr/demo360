@@ -99,7 +99,10 @@ class _AppointmentViewState extends State<AppointmentView> {
                   ),
                   const SizedBox(height: 20),
                   // 2. Hizmet Seçimi (MultiDropdown)
-                  Text("Hizmet Seçimi"),
+                  const Text(
+                    "Hizmet Seçimi",
+                    style: TextStyle(fontSize: 16),
+                  ),
                   MultiDropdown(
                     items: provider.services.map((service) {
                       return DropdownItem<int>(
@@ -165,7 +168,7 @@ class _AppointmentViewState extends State<AppointmentView> {
                           ],
                         ),
                         // Takvim
-                        buildCalendar(context, provider),
+                        provider.buildCalendar(context),
                       ],
                     ),
                   ),
@@ -228,7 +231,10 @@ class _AppointmentViewState extends State<AppointmentView> {
                             final serviceId = service.hizmetId!;
                             final serviceSlots =
                                 provider.serviceTimeSlots[serviceId] ??
-                                    []; //saat aralıkları apıden gelıyor
+                                    []; // saat aralıkları apıden geliyor
+
+                            // Renk haritasını al
+                            final colorMap = provider.kontrolEt(serviceId);
 
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,25 +276,45 @@ class _AppointmentViewState extends State<AppointmentView> {
                                           final bitisSaati = timeSlot
                                               .add(Duration(minutes: periyot));
                                           final formattedStartTime =
-                                              DateFormat('Hm').format(timeSlot);
+                                              DateFormat('HH:mm')
+                                                  .format(timeSlot);
                                           final formattedEndTime =
-                                              DateFormat('Hm')
+                                              DateFormat('HH:mm')
                                                   .format(bitisSaati);
 
-                                          // Check if the time slot is in the past
+                                          // Geçmiş saat dilimlerini kontrol et
                                           bool isPast =
                                               timeSlot.isBefore(DateTime.now());
 
+                                          // Renk haritasına göre rengi belirle
+                                          Color slotColor =
+                                              Colors.blue.shade100;
+                                          if (colorMap.containsKey(
+                                              formattedStartTime)) {
+                                            slotColor =
+                                                colorMap[formattedStartTime]!;
+                                          }
+
                                           return Opacity(
-                                            opacity: isPast
-                                                ? 0.5
-                                                : 1.0, // Reduce opacity for past slots
+                                            opacity: isPast ? 0.5 : 1.0,
                                             child: GestureDetector(
-                                              onTap: isPast
-                                                  ? null // Disable tap for past slots
+                                              onTap: isPast ||
+                                                      slotColor ==
+                                                          Colors.green ||
+                                                      slotColor == Colors.red
+                                                  ? null // Geçmiş saatler, kullanıcı tarafından alınmış ve başkaları tarafından alınmış saatler için tıklamayı devre dışı bırak
                                                   : () {
-                                                      // Handle time slot selection
-                                                      // e.g., provider.selectTimeSlot(timeSlot);
+                                                      // Saat dilimi seçimini işleme
+                                                      provider.selectTimeSlot(
+                                                          timeSlot, serviceId);
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                              '$formattedStartTime - $formattedEndTime saatleri arasında randevu alındı.'),
+                                                        ),
+                                                      );
                                                     },
                                               child: Chip(
                                                 label: Row(
@@ -297,23 +323,22 @@ class _AppointmentViewState extends State<AppointmentView> {
                                                   children: [
                                                     Text(
                                                       '$formattedStartTime - $formattedEndTime',
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 12,
                                                       ),
                                                     ),
-                                                    // Add availability indicator here (optional)
+                                                    // Ekstra göstergeler eklemek isterseniz burada yapabilirsiniz
                                                   ],
                                                 ),
-                                                backgroundColor:
-                                                    Colors.blue.shade100,
+                                                backgroundColor: slotColor,
                                               ),
                                             ),
                                           );
                                         },
                                       )
                                     : const Text(
-                                        'No available time slots for this service.',
+                                        'Bu hizmet için uygun saat dilimi bulunmamaktadır.',
                                         style: TextStyle(color: Colors.red),
                                       ),
 
@@ -332,127 +357,5 @@ class _AppointmentViewState extends State<AppointmentView> {
         ),
       ),
     );
-  }
-
-////////   /////////           //////////           ////////////
-  // Saat seçimi widget'ı için
-  Widget buildCalendar(BuildContext context, AppointmentProvider provider) {
-    return SfCalendar(
-      controller: provider.calendarController,
-      onSelectionChanged: (calendarSelectionDetails) {
-        DateTime? selected = calendarSelectionDetails.date;
-        if (selected == null) return;
-
-        print('Seçilen Tarih: $selected');
-
-        // Geçmiş tarihi kontrol et (bugün ve geleceği seçebilir)
-        DateTime today = DateTime.now();
-        DateTime? maxDate;
-        if (provider.aktifGunSayisi > 0) {
-          maxDate = today.add(Duration(days: provider.aktifGunSayisi));
-        }
-
-        if (selected.isBefore(today.subtract(const Duration(days: 1))) ||
-            (maxDate != null && selected.isAfter(maxDate))) {
-          // Geçmiş veya izin verilen maksimum tarihten sonra bir tarih seçildi
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Bu tarih seçilemez.'),
-            ),
-          );
-          return;
-        }
-
-        // Tarihi seç ve saat dilimlerini göster
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          try {
-            await provider.selectDate(context, selected);
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Servis detayları alınamadı: $e'),
-              ),
-            );
-          }
-        });
-      },
-      view: CalendarView.month,
-      timeZone: 'Turkey Standard Time',
-      timeSlotViewSettings: const TimeSlotViewSettings(timeFormat: 'HH:mm'),
-      monthViewSettings: const MonthViewSettings(
-        showTrailingAndLeadingDates:
-            false, // Trailing ve leading tarihleri gizle
-        dayFormat: 'd',
-      ),
-      minDate: DateTime.now(),
-      maxDate: provider.aktifGunSayisi > 0
-          ? DateTime.now().add(Duration(days: provider.aktifGunSayisi))
-          : DateTime.now()
-              .add(const Duration(days: 365)), // aktifGunSayisi 0 ise 1 yıl
-      monthCellBuilder: (BuildContext context, MonthCellDetails details) {
-        DateTime date = details.date;
-        DateTime today = DateTime.now();
-        DateTime? maxDate;
-        if (provider.aktifGunSayisi > 0) {
-          maxDate = today.add(Duration(days: provider.aktifGunSayisi));
-        }
-
-        bool isSelectable = true;
-        if (date.isBefore(today.subtract(const Duration(days: 1)))) {
-          isSelectable = false;
-        } else if (maxDate != null && date.isAfter(maxDate)) {
-          isSelectable = false;
-        }
-
-        print('Date: $date, Selectable: $isSelectable');
-
-        return Container(
-          decoration: BoxDecoration(
-            color: isSelectable ? Colors.white : Colors.grey[300],
-            border: Border.all(color: Colors.grey),
-          ),
-          child: Center(
-            child: Text(
-              date.day.toString(),
-              style: TextStyle(
-                color: isSelectable ? Colors.black : Colors.grey,
-                fontWeight: isSelectable ? FontWeight.normal : FontWeight.bold,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-//////////////////////
-  Map<String, Color> kontrolEt(List<Secilisaatler> secilisaatler,
-      List<Randevu> randevular, int girisYapanKullaniciId) {
-    Map<String, Color> saatDurumlari = {};
-
-    for (var saat in secilisaatler) {
-      bool saatDurumu = false; // Varsayılan durum false
-
-      for (var randevu in randevular) {
-        // Başlangıç saatlerini, hizmeti ve kullanıcı ID'lerini kontrol et
-        if (saat.baslangicsaati == randevu.baslangicsaati &&
-            saat.hizmetad == randevu.hizmetad &&
-            saat.hizmetId == randevu.hizmetid &&
-            randevu.kullaniciid == girisYapanKullaniciId) {
-          // Eğer giriş yapan kullanıcının ID'si ile randevudaki kullanıcı ID'si eşleşiyorsa
-          saatDurumu = true; // Durum yeşil
-          break; // Eşleşme bulundu, döngüden çık
-        }
-      }
-
-      // Durumu kontrol et ve uygun rengi belirle
-      if (saatDurumu) {
-        saatDurumlari[saat.baslangicsaati ?? ''] = Colors.green; // Yeşil
-      } else {
-        saatDurumlari[saat.baslangicsaati ?? ''] = Colors.red; // Kırmızı
-      }
-    }
-
-    return saatDurumlari; // Renk durumlarını döndür
   }
 }
