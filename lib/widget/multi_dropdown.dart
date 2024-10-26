@@ -5,7 +5,7 @@ import 'dart:convert';
 
 class RandevuDropdown extends StatefulWidget {
   final String tesisId; // CustomDropdown'dan gelen tesis ID'si
-  RandevuDropdown({Key? key, required this.tesisId}) : super(key: key);
+  const RandevuDropdown({super.key, required this.tesisId});
 
   @override
   State<RandevuDropdown> createState() => _RandevuDropdownState();

@@ -99,7 +99,7 @@ class AppointmentProvider with ChangeNotifier {
       }
     } catch (e) {
       print('Tesisleri alırken hata oluştu: $e');
-      throw e;
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -163,7 +163,7 @@ class AppointmentProvider with ChangeNotifier {
       }
     } catch (e) {
       print('Hizmetler API hatası: $e');
-      throw e;
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -289,7 +289,7 @@ class AppointmentProvider with ChangeNotifier {
       }
     } catch (e) {
       print('Hata: $e');
-      throw e;
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -303,8 +303,9 @@ class AppointmentProvider with ChangeNotifier {
     _serviceTimeSlots.clear();
     _servicePeriyots.clear();
     for (var hizmet in _selectedServices) {
-      if (hizmet.zamanlayiciList == null || hizmet.zamanlayiciList!.isEmpty)
+      if (hizmet.zamanlayiciList == null || hizmet.zamanlayiciList!.isEmpty) {
         continue;
+      }
       // Haftanın günü (1=Monday, ..., 7=Sunday) → Pazar 0 olmalı
       int selectedWeekday = _selectedDate!.weekday % 7;
 
@@ -493,12 +494,10 @@ class AppointmentProvider with ChangeNotifier {
         hizmetId); //firstWhereOrNull((s) => s.hizmetId == hizmetId);
 
     bool isServiceUnavailable = false;
-    if (service != null) {
-      if (service.saatlikKapasite == 0 || service.ozelalan == 1) {
-        isServiceUnavailable = true;
-      }
+    if (service.saatlikKapasite == 0 || service.ozelalan == 1) {
+      isServiceUnavailable = true;
     }
-
+  
     for (var timeSlot in timeSlots) {
       String formattedTime = DateFormat('HH:mm').format(timeSlot);
       if (isServiceUnavailable) {
@@ -534,12 +533,7 @@ class AppointmentProvider with ChangeNotifier {
     // Öncelikle hizmetin saatlik kapasitesini kontrol edin
     Bilgi? service = _selectedServices.firstWhere((s) =>
         s.hizmetId ==
-        serviceId); //firstWhereOrNull((s) => s.hizmetId == serviceId);
-
-    if (service == null) {
-      // Hizmet bulunamadı, hata mesajı gösterebilirsiniz
-      return;
-    }
+        serviceId);
 
     if (service.saatlikKapasite == 0 || service.ozelalan == 1) {
       // Bu hizmet için randevu alınamaz

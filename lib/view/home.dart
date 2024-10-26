@@ -1,4 +1,4 @@
-import 'package:armiyaapp/widget/drawer.dart';
+/*import 'package:armiyaapp/widget/drawer.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
         leading: Builder(
           builder: (context) {
             return IconButton(
-              icon: Icon(Icons.menu, color: Colors.black),
+              icon: const Icon(Icons.menu, color: Colors.black),
               onPressed: () {
                 Scaffold.of(context).openDrawer(); // Drawer'ı açmak için
               },
@@ -31,8 +31,8 @@ class _HomePageState extends State<HomePage> {
           children: [
             DropdownButton<String>(
               value: selectedLanguage,
-              icon: Icon(Icons.arrow_drop_down, color: Colors.black),
-              underline: SizedBox(), // Alt çizgiyi kaldırıyoruz
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+              underline: const SizedBox(), // Alt çizgiyi kaldırıyoruz
               onChanged: (String? newValue) {
                 setState(() {
                   selectedLanguage = newValue!;
@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
                   value: value,
                   child: Row(
                     children: [
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(value),
                     ],
                   ),
@@ -56,22 +56,23 @@ class _HomePageState extends State<HomePage> {
         actions: [
           Row(
             children: [
-              Text(
+              const Text(
+           
                 'AHMET ŞENER (#139)',
                 style: TextStyle(color: Colors.black),
               ),
               const SizedBox(width: 8),
               PopupMenuButton<int>(
-                icon: CircleAvatar(
+                icon: const CircleAvatar(
                   backgroundColor: Colors.black,
                   child: Icon(Icons.person, color: Colors.white),
                 ),
                 itemBuilder: (context) => [
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 1,
                     child: Text('Profil'),
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 2,
                     child: Text('Çıkış Yap'),
                   ),
@@ -89,10 +90,11 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(width: 16),
         ],
       ),
-      drawer: CustomDrawer(), // Drawer burada tanımlandı
-      body: Center(
+      drawer: const CustomDrawer(), // Drawer burada tanımlandı
+      body: const Center(
         child: Text('Ana Sayfa İçeriği'),
       ),
     );
   }
 }
+*/

@@ -9,7 +9,7 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextInputType? keyboardType; // Klavye tipi için parametre
 
-  CustomTextField({
+  const CustomTextField({
     required this.hintText,
     this.isPassword = false,
     this.suffixText,
@@ -17,8 +17,8 @@ class CustomTextField extends StatelessWidget {
     required this.controller,
     this.validator,
     this.keyboardType, // Klavye tipi isteğe bağlı
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

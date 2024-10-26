@@ -9,8 +9,8 @@ class CustomButton extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.onPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +19,11 @@ class CustomButton extends StatelessWidget {
           MediaQuery.of(context).size.width / 1, // Ekranın 3'te biri genişlikte
       child: ElevatedButton.icon(
         icon: Icon(icon, color: Colors.white), // İkon rengi beyaz
-        label: Text(text),
+        label: Text(
+          text, style: const TextStyle(color: Colors.white), // Metin rengi beyaz),
+        ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue, // Buton rengi mavi
+          backgroundColor: const Color(0xFF5664D9),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           textStyle: const TextStyle(fontSize: 16),
           shape: RoundedRectangleBorder(

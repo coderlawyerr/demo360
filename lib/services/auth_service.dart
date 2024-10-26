@@ -5,7 +5,7 @@ class AuthService {
 
   // Login fonksiyonu
   Future<http.Response> login(String email, String password) async {
-    final String url = '$baseUrl';
+    final String url = baseUrl;
 
     try {
       final response = await http.post(

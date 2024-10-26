@@ -7,10 +7,10 @@ class RandevuWidget extends StatefulWidget {
   final List<Hizmetler> tumHizmetler;
 
   const RandevuWidget({
-    Key? key,
+    super.key,
     required this.selectedDate,
     required this.tumHizmetler,
-  }) : super(key: key);
+  });
 
   @override
   State<RandevuWidget> createState() => _RandevuWidgetState();
@@ -47,11 +47,11 @@ class _RandevuWidgetState extends State<RandevuWidget> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Text(
+            const Text(
               "Randevu Saati Seçimi -",
               style: TextStyle(fontSize: 18),
             ),
-            SizedBox(width: 15),
+            const SizedBox(width: 15),
             Center(
               child: Container(
                 decoration: BoxDecoration(
@@ -63,14 +63,14 @@ class _RandevuWidgetState extends State<RandevuWidget> {
                 child: Center(
                   child: Text(
                     formattedDate,
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
             ),
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -78,7 +78,7 @@ class _RandevuWidgetState extends State<RandevuWidget> {
             renkAciklama("Kırmızı : ", "Kapasite Dolu", Colors.red),
             renkAciklama("Yeşil : ", "Kayıtlı Randevunuz", Colors.green),
             renkAciklama("Sarı : ", "Aynı saatte randevunuz var", Colors.yellow),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Center(
               child: SizedBox(
                 width: 150,
@@ -95,13 +95,13 @@ class _RandevuWidgetState extends State<RandevuWidget> {
                 child: Center(
                   child: Text(
                     "Seçilen Hizmet: ${secilenHizmet!.hizmetAd}",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
           ],
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Expanded(
           child: ListView.builder(
             itemCount: filtrelenmisHizmetler.length,
@@ -114,7 +114,7 @@ class _RandevuWidgetState extends State<RandevuWidget> {
                   });
                 },
                 child: Card(
-                  margin: EdgeInsets.all(8.0),
+                  margin: const EdgeInsets.all(8.0),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
@@ -122,16 +122,16 @@ class _RandevuWidgetState extends State<RandevuWidget> {
                       children: [
                         Text(
                           hizmet.hizmetAd ?? 'Hizmet Adı Yok',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text('Hizmet Türü: ${hizmet.hizmetTuru ?? 'Belirtilmemiş'}'),
                         Text('Özel Alan: ${hizmet.ozelAlan ?? 0}'),
                         Text('Genel Alan: ${hizmet.limitsizKapasite ?? 0}'),
                         Text('Genel Kullanım: ${hizmet.gunlukGirissayisi ?? 0}'),
                         Text('Randevu Kapasitesi: ${hizmet.saatlikKapasite ?? 0}'),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         
                       ],
                     ),
@@ -157,7 +157,7 @@ class _RandevuWidgetState extends State<RandevuWidget> {
             ),
             TextSpan(
               text: aciklama,
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
             ),
           ],
         ),

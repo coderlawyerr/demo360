@@ -1,12 +1,10 @@
 // appointment_view.dart
 
-import 'package:armiyaapp/model/new_model/newmodel.dart';
 import 'package:armiyaapp/providers/appoinment/appoinment_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class AppointmentView extends StatefulWidget {
   const AppointmentView({super.key});

@@ -1,3 +1,4 @@
+import 'package:armiyaapp/data/app_shared_preference.dart';
 import 'package:armiyaapp/model/usermodel.dart';
 import 'package:armiyaapp/services/auth_service.dart';
 import 'package:armiyaapp/view/appoinment/appoinment_view.dart';
@@ -6,7 +7,7 @@ import 'package:armiyaapp/widget/button.dart';
 import 'package:armiyaapp/widget/textfield.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:hive_flutter/adapters.dart';
+
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -27,7 +28,7 @@ class LoginPage extends StatelessWidget {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
 
         // Gelen yanıtı User modeline dönüştür
-        User user = User.fromJson(responseData);
+        UserModel user = UserModel.fromJson(responseData);
 
         // Yanıtın durumunu kontrol et
         if (user.status == true) {
@@ -35,13 +36,13 @@ class LoginPage extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${user.message}')),
           );
-
+SharedDataService().saveLoginData(responseData.toString());
           // Kullanıcı verilerini Hive kutusuna kaydet
-          var box = Hive.box<User>('userBox');
-          await box.put('currentUser', user); // Kullanıcı bilgilerini kaydet
+    //      var box = Hive.box<User>('userBox');
+     //     await box.put('currentUser', user); // Kullanıcı bilgilerini kaydet
 
           // Kullanıcı bilgilerini konsola yazdır
-          print("Kullanıcı ID: ${user.iD}");
+       
           print("Ad Soyad: ${user.isimsoyisim}");
           print("Yetki Grubu: ${user.yetkiGrubu}");
           print("Özel Yetkiler: ${user.ozelYetkiler}");

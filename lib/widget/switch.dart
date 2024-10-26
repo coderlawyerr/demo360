@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SwitchWidget extends StatefulWidget {
-  const SwitchWidget({Key? key, required this.title}) : super(key: key);
+  const SwitchWidget({super.key, required this.title});
 
   final String title;
 

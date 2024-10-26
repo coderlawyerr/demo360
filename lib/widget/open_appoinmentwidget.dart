@@ -8,13 +8,13 @@ class OpenAppointmentWidget extends StatelessWidget {
   final EdgeInsets padding;
 
   const OpenAppointmentWidget({
-    Key? key,
+    super.key,
     required this.text,
     this.textColor = Colors.black,
     this.borderColor = Colors.grey,
     this.borderRadius = 8.0,
     this.padding = const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

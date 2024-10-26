@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'dart:convert';
 
 class CalendarInfoModel {
   final List<Bilgi>? bilgi;
