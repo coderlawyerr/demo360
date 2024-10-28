@@ -11,49 +11,44 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-final SharedDataService _dataService = SharedDataService();
+  final SharedDataService _dataService = SharedDataService();
 
   @override
   void initState() {
-  initUserData();
+    initUserData();
     super.initState();
   }
-// Kullanıcı daha önce oturup açmış ise home page e git açmamış ise logine
-  initUserData()async{
-await Future.delayed(const Duration(seconds: 2));
-    await _dataService.getLoginData().then((res){
-      if(res==null){
-return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginPage()));
-   }else{
-    return Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const HomePage()));
-   }
-   });
 
- 
+// Kullanıcı daha önce oturup açmış ise home page e git açmamış ise logine
+  initUserData() async {
+    await Future.delayed(const Duration(seconds: 1));
+    await _dataService.getLoginData().then((res) {
+      if (res == null) {
+        return Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LoginPage()));
+      } else {
+        return Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const HomePage()));
+      }
+    });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
-        height:MediaQuery.of(context).size.height ,
-        child:const Column(
+        height: MediaQuery.of(context).size.height,
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-
-            CircularProgressIndicator(),
-            Text("Yükleniyor..")
-        
-        
-        
-        ],),
+          children: [CircularProgressIndicator(), Text("Yükleniyor..")],
+        ),
       ),
     );
-
-
-
   }
 }
+
+
+
+// Email : 

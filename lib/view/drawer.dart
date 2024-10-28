@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../navigator/custom_navigator.dart';
+import 'appoinment/appoinment_view.dart';
+import 'qr_page.dart';
+
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final AppNavigator nav = AppNavigator.instance;
     return Drawer(
       child: SafeArea(
         child: Column(
@@ -14,8 +19,8 @@ class MyDrawer extends StatelessWidget {
             ),
             ExpansionTile(
               leading: Icon(Icons.calendar_today, color: Colors.grey[90]),
-              title:
-                  Text('Randevularım', style: TextStyle(color: Colors.grey[90])),
+              title: Text('Randevularım',
+                  style: TextStyle(color: Colors.grey[90])),
               children: [
                 ListTile(
                   title: Padding(
@@ -25,6 +30,8 @@ class MyDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context);
+                    nav.push(
+                        context: context, routePage: const AppointmentView());
                     // Aktif Randevularım sayfasına yönlendirme kodu
                   },
                 ),
@@ -36,6 +43,9 @@ class MyDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context);
+
+                    nav.push(
+                        context: context, routePage: const AppointmentView());
                     // İptal Edilen Randevularım sayfasına yönlendirme kodu
                   },
                 ),
@@ -47,6 +57,8 @@ class MyDrawer extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context);
+                    nav.push(
+                        context: context, routePage: const AppointmentView());
                     // Geçmiş Randevularım sayfasına yönlendirme kodu
                   },
                 ),
@@ -73,6 +85,7 @@ class MyDrawer extends StatelessWidget {
               text: 'QR Kod',
               onTap: () {
                 Navigator.pop(context);
+                nav.push(context: context, routePage: QRImageFetcher());
                 // QR Kod sayfasına yönlendirme kodu
               },
             ),

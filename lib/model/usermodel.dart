@@ -1,5 +1,5 @@
 class UserModel {
-  String? status;
+  bool? status;
   String? message;
   Kullanicibilgisi? kullanicibilgisi;
   String? isimsoyisim;
@@ -15,7 +15,7 @@ class UserModel {
       this.ozelYetkiler});
 
   UserModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
+    status = json['status'].toString() == 'true';
     message = json['message'];
     //kullanicibilgisi = json['kullanicibilgisi'] ;
     isimsoyisim = json['isimsoyisim'];
@@ -24,15 +24,15 @@ class UserModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
-    if (this.kullanicibilgisi != String) {
-      data['kullanicibilgisi'] = this.kullanicibilgisi!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['message'] = message;
+    if (kullanicibilgisi != String) {
+      data['kullanicibilgisi'] = kullanicibilgisi!.toJson();
     }
-    data['isimsoyisim'] = this.isimsoyisim;
-    data['yetki_Grubu'] = this.yetkiGrubu;
-    data['ozelYetkiler'] = this.ozelYetkiler;
+    data['isimsoyisim'] = isimsoyisim;
+    data['yetki_Grubu'] = yetkiGrubu;
+    data['ozelYetkiler'] = ozelYetkiler;
     return data;
   }
 }
@@ -51,7 +51,7 @@ class Kullanicibilgisi {
   String? sessions;
   int? silinenleriGoster;
   String? token;
-  dynamic? tematercihleri;
+  dynamic tematercihleri;
   String? magictoken;
   String? olusturmaTarihi;
   String? profilResmi;
@@ -267,81 +267,81 @@ class Kullanicibilgisi {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['id'] = this.id;
-    data['isimsoyisim'] = this.isimsoyisim;
-    data['kullaniciadi'] = this.kullaniciadi;
-    data['eposta'] = this.eposta;
-    data['ulkekodu'] = this.ulkekodu;
-    data['telefon'] = this.telefon;
-    data['sifre'] = this.sifre;
-    data['yetki_Grubu'] = this.yetkiGrubu;
-    data['ozelYetkiler'] = this.ozelYetkiler;
-    data['hesapdurumu'] = this.hesapdurumu;
-    data['sessions'] = this.sessions;
-    data['silinenleriGoster'] = this.silinenleriGoster;
-    data['token'] = this.token;
-    data['tematercihleri'] = this.tematercihleri;
-    data['magictoken'] = this.magictoken;
-    data['olusturma_tarihi'] = this.olusturmaTarihi;
-    data['profil_resmi'] = this.profilResmi;
-    data['tckimlikno'] = this.tckimlikno;
-    data['cinsiyet'] = this.cinsiyet;
-    data['uye_evtel'] = this.uyeEvtel;
-    data['uye_adres'] = this.uyeAdres;
-    data['uye_il'] = this.uyeIl;
-    data['uye_ilce'] = this.uyeIlce;
-    data['misafir_durumu'] = this.misafirDurumu;
-    data['tesisler'] = this.tesisler;
-    data['uyelikler'] = this.uyelikler;
-    data['odeme_sekli'] = this.odemeSekli;
-    data['kart_id'] = this.kartId;
-    data['gecici_qrkod'] = this.geciciQrkod;
-    data['medeni_hali'] = this.medeniHali;
-    data['es_adi'] = this.esAdi;
-    data['evlilik_tarihi'] = this.evlilikTarihi;
-    data['es_dogumtarihi'] = this.esDogumtarihi;
-    data['aile_adres'] = this.aileAdres;
-    data['aile_il'] = this.aileIl;
-    data['aile_ilce'] = this.aileIlce;
-    data['firma_ad'] = this.firmaAd;
-    data['firma_unvan'] = this.firmaUnvan;
-    data['firma_ceptel'] = this.firmaCeptel;
-    data['firma_istel'] = this.firmaIstel;
-    data['firma_kimlik'] = this.firmaKimlik;
-    data['firma_eposta'] = this.firmaEposta;
-    data['firma_adres'] = this.firmaAdres;
-    data['firma_il'] = this.firmaIl;
-    data['firma_ilce'] = this.firmaIlce;
-    data['webadres'] = this.webadres;
-    data['digerbilgiler'] = this.digerbilgiler;
-    data['uye_dogumyeri'] = this.uyeDogumyeri;
-    data['uye_dogumtarihi'] = this.uyeDogumtarihi;
-    data['uye_egitim'] = this.uyeEgitim;
-    data['uye_kangrubu'] = this.uyeKangrubu;
-    data['aracplakasi'] = this.aracplakasi;
-    data['uye_hobiler'] = this.uyeHobiler;
-    data['uye_fobiler'] = this.uyeFobiler;
-    data['acil_ad1'] = this.acilAd1;
-    data['acil_soyad1'] = this.acilSoyad1;
-    data['acil_tel1'] = this.acilTel1;
-    data['acil_ad2'] = this.acilAd2;
-    data['acil_soyad2'] = this.acilSoyad2;
-    data['acil_tel2'] = this.acilTel2;
-    data['acil_ad3'] = this.acilAd3;
-    data['acil_soyad3'] = this.acilSoyad3;
-    data['acil_tel3'] = this.acilTel3;
-    data['acil_ad4'] = this.acilAd4;
-    data['acil_soyad4'] = this.acilSoyad4;
-    data['acil_tel4'] = this.acilTel4;
-    data['acil_ad5'] = this.acilAd5;
-    data['acil_soyad5'] = this.acilSoyad5;
-    data['acil_tel5'] = this.acilTel5;
-    data['uye_durumu'] = this.uyeDurumu;
-    data['detaylar'] = this.detaylar;
-    data['yaptirim_cezalari'] = this.yaptirimCezalari;
-    data['sifre_degistirildimi'] = this.sifreDegistirildimi;
-    data['giris_hakki'] = this.girisHakki;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['isimsoyisim'] = isimsoyisim;
+    data['kullaniciadi'] = kullaniciadi;
+    data['eposta'] = eposta;
+    data['ulkekodu'] = ulkekodu;
+    data['telefon'] = telefon;
+    data['sifre'] = sifre;
+    data['yetki_Grubu'] = yetkiGrubu;
+    data['ozelYetkiler'] = ozelYetkiler;
+    data['hesapdurumu'] = hesapdurumu;
+    data['sessions'] = sessions;
+    data['silinenleriGoster'] = silinenleriGoster;
+    data['token'] = token;
+    data['tematercihleri'] = tematercihleri;
+    data['magictoken'] = magictoken;
+    data['olusturma_tarihi'] = olusturmaTarihi;
+    data['profil_resmi'] = profilResmi;
+    data['tckimlikno'] = tckimlikno;
+    data['cinsiyet'] = cinsiyet;
+    data['uye_evtel'] = uyeEvtel;
+    data['uye_adres'] = uyeAdres;
+    data['uye_il'] = uyeIl;
+    data['uye_ilce'] = uyeIlce;
+    data['misafir_durumu'] = misafirDurumu;
+    data['tesisler'] = tesisler;
+    data['uyelikler'] = uyelikler;
+    data['odeme_sekli'] = odemeSekli;
+    data['kart_id'] = kartId;
+    data['gecici_qrkod'] = geciciQrkod;
+    data['medeni_hali'] = medeniHali;
+    data['es_adi'] = esAdi;
+    data['evlilik_tarihi'] = evlilikTarihi;
+    data['es_dogumtarihi'] = esDogumtarihi;
+    data['aile_adres'] = aileAdres;
+    data['aile_il'] = aileIl;
+    data['aile_ilce'] = aileIlce;
+    data['firma_ad'] = firmaAd;
+    data['firma_unvan'] = firmaUnvan;
+    data['firma_ceptel'] = firmaCeptel;
+    data['firma_istel'] = firmaIstel;
+    data['firma_kimlik'] = firmaKimlik;
+    data['firma_eposta'] = firmaEposta;
+    data['firma_adres'] = firmaAdres;
+    data['firma_il'] = firmaIl;
+    data['firma_ilce'] = firmaIlce;
+    data['webadres'] = webadres;
+    data['digerbilgiler'] = digerbilgiler;
+    data['uye_dogumyeri'] = uyeDogumyeri;
+    data['uye_dogumtarihi'] = uyeDogumtarihi;
+    data['uye_egitim'] = uyeEgitim;
+    data['uye_kangrubu'] = uyeKangrubu;
+    data['aracplakasi'] = aracplakasi;
+    data['uye_hobiler'] = uyeHobiler;
+    data['uye_fobiler'] = uyeFobiler;
+    data['acil_ad1'] = acilAd1;
+    data['acil_soyad1'] = acilSoyad1;
+    data['acil_tel1'] = acilTel1;
+    data['acil_ad2'] = acilAd2;
+    data['acil_soyad2'] = acilSoyad2;
+    data['acil_tel2'] = acilTel2;
+    data['acil_ad3'] = acilAd3;
+    data['acil_soyad3'] = acilSoyad3;
+    data['acil_tel3'] = acilTel3;
+    data['acil_ad4'] = acilAd4;
+    data['acil_soyad4'] = acilSoyad4;
+    data['acil_tel4'] = acilTel4;
+    data['acil_ad5'] = acilAd5;
+    data['acil_soyad5'] = acilSoyad5;
+    data['acil_tel5'] = acilTel5;
+    data['uye_durumu'] = uyeDurumu;
+    data['detaylar'] = detaylar;
+    data['yaptirim_cezalari'] = yaptirimCezalari;
+    data['sifre_degistirildimi'] = sifreDegistirildimi;
+    data['giris_hakki'] = girisHakki;
     return data;
   }
 }

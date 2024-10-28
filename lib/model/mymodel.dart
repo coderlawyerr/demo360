@@ -1,11 +1,11 @@
-class Armyaapp {
+class CalenderModel {
     final List<Bilgi>? bilgi;
     final List<Secilisaatler>? secilisaatler;
     final List<Randevu>? randevu;
     final List<Uyegruplari>? uyegruplari;
     final List<int>? kayitolacaklar;
 
-    Armyaapp({
+    CalenderModel({
         this.bilgi,
         this.secilisaatler,
         this.randevu,

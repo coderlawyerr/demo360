@@ -1,13 +1,15 @@
 import 'package:armiyaapp/data/app_shared_preference.dart';
 import 'package:armiyaapp/model/usermodel.dart';
 import 'package:armiyaapp/services/auth_service.dart';
-import 'package:armiyaapp/view/appoinment/appoinment_view.dart';
+ 
+import 'package:armiyaapp/view/home_page.dart';
 
 import 'package:armiyaapp/widget/button.dart';
 import 'package:armiyaapp/widget/textfield.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
+import '../navigator/custom_navigator.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -19,6 +21,7 @@ class LoginPage extends StatelessWidget {
   Future<void> login(BuildContext context) async {
     final String email = emailController.text;
     final String password = passwordController.text;
+    final AppNavigator nav = AppNavigator.instance;
 
     try {
       // AuthService üzerinden login işlemi
@@ -36,22 +39,21 @@ class LoginPage extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${user.message}')),
           );
-SharedDataService().saveLoginData(responseData.toString());
+          SharedDataService().saveLoginData(responseData.toString());
           // Kullanıcı verilerini Hive kutusuna kaydet
-    //      var box = Hive.box<User>('userBox');
-     //     await box.put('currentUser', user); // Kullanıcı bilgilerini kaydet
+          //      var box = Hive.box<User>('userBox');
+          //     await box.put('currentUser', user); // Kullanıcı bilgilerini kaydet
 
           // Kullanıcı bilgilerini konsola yazdır
-       
+
           print("Ad Soyad: ${user.isimsoyisim}");
           print("Yetki Grubu: ${user.yetkiGrubu}");
           print("Özel Yetkiler: ${user.ozelYetkiler}");
 
           // Giriş yapan kullanıcı bilgilerini işleyin
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AppointmentView()),
-          ); // Giriş başarılı olursa yönlendirme
+
+          nav.push(context: context, routePage: const HomePage());
+          // Giriş başarılı olursa yönlendirme
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${user.message}')),

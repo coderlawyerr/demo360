@@ -1,4 +1,4 @@
-import 'package:armiyaapp/widget/guess%C4%B1fon_dropdown.dart';
+
 import 'package:armiyaapp/widget/switch.dart';
 import 'package:flutter/material.dart';
 import 'package:armiyaapp/widget/open_appoinmentwidget.dart';
@@ -110,7 +110,7 @@ class _OpenAppointmentState extends State<OpenAppointment> {
               const SizedBox(
                 height: 10,
               ),
-              const GuestInfoDropdown(),
+            //const GuestInfoDropdown(),
             ],
           ),
         ),

@@ -1,18 +1,15 @@
- 
 import 'package:armiyaapp/providers/appoinment/appoinment_provider.dart';
 import 'package:armiyaapp/splash_screen.dart';
 import 'package:armiyaapp/view/appoinment/appoinment_view.dart';
- 
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
- 
+
 import 'package:provider/provider.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
- 
 
   runApp(
     ChangeNotifierProvider(
@@ -43,7 +40,7 @@ class MyApp extends StatelessWidget {
         SfGlobalLocalizations.delegate
       ],
       supportedLocales: const [Locale('tr')],
-      home: const AppointmentView(),
+      home: const SplashScreen(),
     );
   }
 }

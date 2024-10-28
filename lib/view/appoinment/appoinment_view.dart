@@ -10,7 +10,7 @@ class AppointmentView extends StatefulWidget {
   const AppointmentView({super.key});
 
   @override
-  _AppointmentViewState createState() => _AppointmentViewState();
+  State createState() => _AppointmentViewState();
 }
 
 class _AppointmentViewState extends State<AppointmentView> {
@@ -31,7 +31,10 @@ class _AppointmentViewState extends State<AppointmentView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
         title: const Text('Randevu Oluştur'),
       ),
       body: Padding(
@@ -61,9 +64,12 @@ class _AppointmentViewState extends State<AppointmentView> {
                   const SizedBox(height: 10),
                   // 1. Tesis Seçimi Dropdown
                   Container(
+                    margin: const EdgeInsets.all(4),
+                    padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                    ),
+                        border: Border.all(color: Colors.grey),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(4))),
                     child: DropdownButton<int>(
                       underline: const SizedBox(),
                       hint: const Text('Tesis Seçiniz'),
@@ -76,6 +82,10 @@ class _AppointmentViewState extends State<AppointmentView> {
                         );
                       }).toList(),
                       onChanged: (value) async {
+                        provider.setSelectedDate(null);
+                        provider.calendarController.selectedDate = null;
+                        provider.setSelectedServices([]);
+
                         if (value != null) {
                           provider.setSelectedFacility(value);
                           try {
@@ -101,6 +111,7 @@ class _AppointmentViewState extends State<AppointmentView> {
                     "Hizmet Seçimi",
                     style: TextStyle(fontSize: 16),
                   ),
+
                   MultiDropdown(
                     items: provider.services.map((service) {
                       return DropdownItem<int>(
@@ -109,13 +120,8 @@ class _AppointmentViewState extends State<AppointmentView> {
                       );
                     }).toList(),
                     onSelectionChange: (List<int> selectedIds) async {
+                      provider.resetToCalendar();
                       provider.setSelectedServices(selectedIds);
-                      if (selectedIds.isNotEmpty) {
-                        // Hizmet seçildiğinde takvimi göstermek için
-                      } else {
-                        // Hizmet seçimi temizlendiğinde takvimi gizlemek için
-                        provider.resetToCalendar();
-                      }
                     },
                     selectedItemBuilder: (selectedItems) {
                       // Seçilen hizmetlerin nasıl görüneceğini burada özelleştirebilirsiniz
@@ -129,12 +135,14 @@ class _AppointmentViewState extends State<AppointmentView> {
                             final updatedIds =
                                 List<int>.from(provider.selectedServiceIds);
                             updatedIds.remove(id);
-                            provider.setSelectedServices(updatedIds);
+                            provider.resetToCalendar();
+                            // provider.setSelectedServices(updatedIds);
                           },
                         )
                       ]);
                     },
                   ),
+
                   const SizedBox(height: 20),
                   // Takvim
                   Visibility(
@@ -187,8 +195,29 @@ class _AppointmentViewState extends State<AppointmentView> {
                         ),
                         const SizedBox(height: 10),
                         const Text(
-                          'Mavi Randevu eklenebilir',
+                          'Mavi : Randevu eklenebilir',
                           style: TextStyle(color: Colors.blue),
+                        ),
+                        SizedBox(
+                          height: 2,
+                        ),
+                        const Text(
+                          'Kırmızı : Kapasite dolu',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        SizedBox(
+                          height: 2,
+                        ),
+                        const Text(
+                          'Yeşil: Kayıtlı randevunuz',
+                          style: TextStyle(color: Colors.green),
+                        ),
+                        SizedBox(
+                          height: 2,
+                        ),
+                        const Text(
+                          'Sarı: Aynı saatte randevunuz var',
+                          style: TextStyle(color: Colors.yellow),
                         ),
                         const SizedBox(height: 10),
                         Align(
@@ -197,26 +226,39 @@ class _AppointmentViewState extends State<AppointmentView> {
                             onPressed: () {
                               provider.resetToCalendar();
                             },
-                            child: const Text('Takvime Dön'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(
+                                  0xFF5664D9), // Butonun arka plan rengi
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  8, // Buradaki değeri köşe keskinliğine göre ayarlayabilirsiniz
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              'Takvime Dön',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
+
                         const SizedBox(height: 10),
-                        const Text(
-                          'Hizmet Adı',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        // const Text(
+                        //   'Hizmet Adı',
+                        //   style: TextStyle(fontSize: 16),
+                        // ),
                         const SizedBox(height: 10),
                         // Hizmet Adları ve Kapasite Bilgisi
-                        Wrap(
-                          spacing: 8.0,
-                          children: provider.selectedServices.map((service) {
-                            return Chip(
-                              label: Text(
-                                '${service.hizmetAd ?? 'Hizmet'} - Kapasite: ${service.saatlikKapasite ?? 'Bilinmiyor'}',
-                              ),
-                            );
-                          }).toList(),
-                        ),
+                        // Wrap(
+                        //   spacing: 8.0,
+                        //   children: provider.selectedServices.map((service) {
+                        //     return Chip(
+                        //       label: Text(
+                        //         '${service.hizmetAd ?? 'Hizmet'} - Kapasite: ${service.saatlikKapasite ?? 'Bilinmiyor'}',
+                        //       ),
+                        //     );
+                        //   }).toList(),
+                        // ),
                         const SizedBox(height: 10),
                         // Saat Dilimlerini Listele (Her Hizmet için)
                         ListView.builder(
@@ -246,7 +288,7 @@ class _AppointmentViewState extends State<AppointmentView> {
                                     '${service.hizmetAd ?? 'Hizmet'} - Kapasite: ${service.saatlikKapasite ?? 'Bilinmiyor'}',
                                     style: const TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.normal,
                                     ),
                                   ),
                                 ),
