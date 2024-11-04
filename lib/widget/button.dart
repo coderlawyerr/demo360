@@ -1,8 +1,9 @@
+import 'package:armiyaapp/const/const.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
-  final IconData icon;
+  final IconData? icon;
   final VoidCallback onPressed;
 
   const CustomButton({
@@ -15,23 +16,32 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width:
-          MediaQuery.of(context).size.width / 1, // Ekranın 3'te biri genişlikte
-      child: ElevatedButton.icon(
-        icon: Icon(icon, color: Colors.white), // İkon rengi beyaz
-        label: Text(
-          text, style: const TextStyle(color: Colors.white), // Metin rengi beyaz),
-        ),
+      width: MediaQuery.of(context).size.width /
+          1.5, // Ekranın 1.5'te biri genişlikte
+      child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF5664D9),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          textStyle: const TextStyle(fontSize: 16),
+          backgroundColor: primaryColor,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          textStyle: const TextStyle(fontSize: 20),
           shape: RoundedRectangleBorder(
             borderRadius:
-                BorderRadius.circular(8), // Köşe yuvarlama değeri azaltıldı
+                BorderRadius.circular(6), // Köşe yuvarlama değeri azaltıldı
           ),
         ),
         onPressed: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center, // Metni ortalamak için
+          children: [
+            if (icon != null) ...[
+              Icon(icon, color: Colors.white),
+              const SizedBox(width: 10), // İkon ile metin arasına boşluk ekler
+            ],
+            Text(
+              text,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }

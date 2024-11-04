@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:armiyaapp/const/const.dart';
 import 'package:flutter/material.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:http/http.dart' as http;
@@ -93,28 +94,43 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Randevu QR Kodu')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ValueListenableBuilder(
-              valueListenable: _counter,
-              builder: (context, val, child) {
-                return LinearProgressIndicator(
-                  value: 1 / 5 * val,
-                  color: Colors.blue.shade800,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-                );
-              }),
-          Center(
-            child: _imageUrl != null
-                ? Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Image.network(_imageUrl ?? ''),
-                  )
-                : const CircularProgressIndicator(),
-          ),
-        ],
+      // appBar: AppBar(title: const Text('RANDEVU QR KODU')),
+      body: Padding(
+        padding: EdgeInsets.all(60),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "RANDEVU İÇİN QR KODUNUZ",
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey,
+              ),
+            ),
+            SizedBox(
+              height: 100,
+            ),
+            ValueListenableBuilder(
+                valueListenable: _counter,
+                builder: (context, val, child) {
+                  return LinearProgressIndicator(
+                    value: 1 / 5 * val,
+                    color: Colors.yellow,
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Color(0xFF5664D9)),
+                  );
+                }),
+            Center(
+              child: _imageUrl != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(1),
+                      child: Image.network(_imageUrl ?? ''),
+                    )
+                  : const CircularProgressIndicator(),
+            ),
+          ],
+        ),
       ),
     );
   }

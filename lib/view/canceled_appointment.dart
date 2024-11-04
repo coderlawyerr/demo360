@@ -12,11 +12,10 @@ class _CanceledAppointment extends State<CanceledAppointment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(top: 60, right: 15, left: 15),
-        child: Card(
-          elevation: 4,
-          color: Colors.white,
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20, right: 5, left: 5),
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
@@ -25,41 +24,82 @@ class _CanceledAppointment extends State<CanceledAppointment> {
                 const Row(
                   mainAxisAlignment:
                       MainAxisAlignment.start, // Sol tarafa yaslama
-                  children: [
-                    Text(
-                      " İptal Edilen Randevularınız",
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.normal),
-                    ),
-                  ],
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                const Text(
-                  "Randevularınızı, randevu gününü başlangıç saatinden  en geç  60 dakika öncesine  kadar iptal edebilirsiniz",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.grey),
+                AppointmentCard(
+                  buttonText: "GERİ AL",
+                  title: 'Galata Spor Ve Eğlence Merkezi',
+                  subtitle: 'Fitness Salonu',
+                  date: '12.10.2025',
+                  time: '15:30',
+                  onButtonPressed: () {},
                 ),
-                Card(
-                  child: Column(
-                    children: [
-                      AppointmentCard(
-                        locationName: "Mahide Hatun Spor Kompleksi",
-                        locationType: "Fitness Salonu",
-                        date: "29.10.2024",
-                        startTime: "21:30",
-                        endTime: "23:00",
-                        onCancel: () {
-                          // Randevu iptal işlemi burada yapılabilir
-                          print("Randevu iptal edildi");
-                        },
-                      ),
-                    ],
-                  ),
+                SizedBox(
+                  height: 10,
                 ),
+                AppointmentCard(
+                  buttonText: "GERİ AL",
+                  title: 'Galata Spor Ve Eğlence Merkezi',
+                  subtitle: 'Fitness Salonu',
+                  date: '12.10.2025',
+                  time: '15:30',
+                  onButtonPressed: () {},
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                AppointmentCard(
+                  buttonText: "GERİ AL",
+                  title: 'Galata Spor Ve Eğlence Merkezi',
+                  subtitle: 'Fitness Salonu',
+                  date: '12.10.2025',
+                  time: '15:30',
+                  onButtonPressed: () {},
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                // Column(
+                //   children: [
+                //     Card(
+                //       color: Colors.grey,
+                //       elevation: 4,
+                //       child: Column(
+                //         children: [
+                //           AppointmentCard(
+                //             buttonText: "Geri Al",
+                //             title: 'Galata Spor Ve Eğlence Merkezi',
+                //             subtitle: 'Fitness Salonu',
+                //             date: '12.10.2024',
+                //             time: '15:30 - 18:30',
+                //             onButtonPressed: () {},
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //     SizedBox(
+                //       height: 10,
+                //     ),
+                //     Card(
+                //       elevation: 4,
+                //       color: Colors.white,
+                //       child: Column(
+                //         children: [
+                //           AppointmentCard(
+                //             buttonText: "Geri Al",
+                //             title: 'Galata Spor Ve Eğlence Merkezi',
+                //             subtitle: 'Fitness Salonu',
+                //             date: '12.10.2024',
+                //             time: '15:30 - 18:30',
+                //             onButtonPressed: () {},
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ),

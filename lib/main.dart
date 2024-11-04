@@ -1,6 +1,12 @@
 import 'package:armiyaapp/providers/appoinment/appoinment_provider.dart';
 import 'package:armiyaapp/splash_screen.dart';
+import 'package:armiyaapp/view/active_appointments.dart';
 import 'package:armiyaapp/view/appoinment/appoinment_view.dart';
+import 'package:armiyaapp/view/appoinment/appointment_page.dart';
+import 'package:armiyaapp/view/onboarding/onboarding_one.dart';
+import 'package:armiyaapp/view/onboarding/onboarding_two.dart';
+import 'package:armiyaapp/widget/cancelbutton.dart';
+import 'package:armiyaapp/widget/navigatorbar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -14,13 +20,13 @@ Future<void> main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => AppointmentProvider(),
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -40,7 +46,7 @@ class MyApp extends StatelessWidget {
         SfGlobalLocalizations.delegate
       ],
       supportedLocales: const [Locale('tr')],
-      home: const SplashScreen(),
+      home: OnboardingOne(),
     );
   }
 }

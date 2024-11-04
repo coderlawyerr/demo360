@@ -1,7 +1,8 @@
+import 'package:armiyaapp/const/const.dart';
 import 'package:armiyaapp/data/app_shared_preference.dart';
 import 'package:armiyaapp/model/usermodel.dart';
 import 'package:armiyaapp/services/auth_service.dart';
- 
+
 import 'package:armiyaapp/view/home_page.dart';
 
 import 'package:armiyaapp/widget/button.dart';
@@ -75,37 +76,65 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Giriş Yap",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "HOŞGELDİNİZ",
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.normal,
+                      color: primaryColor),
+                ),
               ),
-              const SizedBox(height: 8),
-              const Text("GKS Yönetimi"),
-              const SizedBox(height: 24),
+              SizedBox(
+                height: 40,
+              ),
+              Text(
+                "Email",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16),
+              ),
               CustomTextField(
+                suffixIcon: Icon(Icons.email, color: Colors.grey),
                 controller: emailController,
                 hintText: "E-Posta Adresi & Telefon",
               ),
-              const SizedBox(height: 16),
+              SizedBox(
+                height: 25,
+              ),
+              Text(
+                "Şifre",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 16),
+              ),
               CustomTextField(
+                suffixIcon: Icon(Icons.key_rounded, color: Colors.grey),
                 controller: passwordController,
                 hintText: "Şifre",
                 keyboardType: TextInputType.text,
                 isPassword: true,
               ),
-              const SizedBox(height: 24),
-              CustomButton(
-                text: "Giriş Yap",
-                icon: Icons.thumb_up,
-                onPressed: () {
-                  login(context);
-                },
+              const SizedBox(height: 45),
+              Center(
+                child: CustomButton(
+                  text: "GİRİŞ YAP",
+                  onPressed: () {
+                    login(context);
+                  },
+                  icon: null,
+                ),
               ),
               const SizedBox(height: 24),
             ],
