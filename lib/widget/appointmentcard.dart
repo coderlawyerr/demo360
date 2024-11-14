@@ -329,3 +329,98 @@ class AppointmentCard extends StatelessWidget {
     );
   }
 }
+
+
+
+
+/////////////gecmıs  randevu kartı
+
+
+
+class PastAppointmentCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String date;
+  final String time;
+
+  const PastAppointmentCard({
+    Key? key,
+    required this.title,
+    required this.subtitle,
+    required this.date,
+    required this.time,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Sol tarafta kalın renk şeridi
+          Container(
+            width: 8,
+            height: double.infinity,
+            color: Colors.grey.shade400, // Şerit rengi
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Başlık ve alt başlık
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  // Tarih ve saat bilgisi için minimalist kutular
+                  Row(
+                    children: [
+                      _buildInfoBox(date, Icons.calendar_today, Colors.grey.shade700),
+                      SizedBox(width: 16),
+                      _buildInfoBox(time, Icons.access_time, Colors.grey.shade700),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Tarih ve saat bilgisi için minimalist kutu tasarımı
+  Widget _buildInfoBox(String text, IconData icon, Color iconColor) {
+    return Row(
+      children: [
+        Icon(icon, color: iconColor, size: 20),
+        SizedBox(width: 4),
+        Text(
+          text,
+          style: const TextStyle(fontSize: 12, color: Colors.black54),
+        ),
+      ],
+    );
+  }
+}
+

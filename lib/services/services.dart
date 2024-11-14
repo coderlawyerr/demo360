@@ -26,7 +26,6 @@ class AppointmentService {
         'token': _token,
       },
     );
-
     if (response.statusCode == 200) {
       if (response.body.isEmpty) {
         throw Exception('API boş yanıt döndü.');
@@ -43,7 +42,6 @@ class AppointmentService {
       throw Exception('Veri çekilemedi. Lütfen tekrar deneyin.');
     }
   }
-
   // Hizmetleri API'den Çekme
   Future<List<Bilgi>> fetchServices(int facilityId) async {
     final response = await http.post(
@@ -56,14 +54,11 @@ class AppointmentService {
         'token': _token,
       },
     );
-
     if (response.statusCode == 200) {
       if (response.body.isEmpty) {
         throw Exception('API boş yanıt döndü.');
       }
-
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
-
       if (jsonResponse['hizmetler'] != null && jsonResponse['hizmetler'] is List) {
         return List<Bilgi>.from(
           jsonResponse['hizmetler'].map((x) => Bilgi.fromMap(x)),
@@ -104,4 +99,41 @@ class AppointmentService {
       throw Exception('Servis detayları getirilemedi.');
     }
   }
+
+
+
+
+
+ /////misafir ekleme işlemi
+// Future<List<Bilgi>> fetcMisafirKabul(int facilityId) async {
+//   final response = await http.post(
+//     Uri.parse('$_baseUrl/$createAppinmentEndPoint'),
+//     headers: {
+//       'Content-Type': 'application/x-www-form-urlencoded',
+//     },
+//     body: {
+//       'tesissecim': facilityId.toString(),
+//       'token': _token,
+//     },
+//   );
+
+//   if (response.statusCode == 200) {
+//     if (response.body.isEmpty) {
+//       throw Exception('API boş yanıt döndü.');
+//     }
+
+//     final Map<String, dynamic> jsonResponse = json.decode(response.body);
+
+//     if (jsonResponse['hizmetler'] != null && jsonResponse['hizmetler'] is List) {
+//       return List<Bilgi>.from(
+//         jsonResponse['hizmetler'].map((x) => Bilgi.fromMap(x)), // Bilgi modeline map ediyoruz
+//       );
+//     } else {
+//       throw Exception('Hizmetler listesi beklenen formatta değil.');
+//     }
+//   } else {
+//     throw Exception('Hizmetler API isteği başarısız oldu.');
+//   }
+// }
+
 }
