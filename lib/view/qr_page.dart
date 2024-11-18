@@ -43,8 +43,7 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
   }
 
   Future<void> _getOriginalBrightness() async {
-    _originalBrightness =
-        await ScreenBrightness().current; // Mevcut parlaklığı al
+    _originalBrightness = await ScreenBrightness().current; // Mevcut parlaklığı al
   }
 
   Future<void> _setBrightness(double brightness) async {
@@ -62,8 +61,7 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
         'accept': '*/*',
         'accept-language': 'tr-TR,tr;q=0.9,en-TR;q=0.8,en;q=0.7,en-US;q=0.6',
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'cookie':
-            'PHPSESSID=6irfbeoeqsmdga2cv8h8n535lv', // Set actual session ID if needed
+        'cookie': 'PHPSESSID=6irfbeoeqsmdga2cv8h8n535lv', // Set actual session ID if needed
         'origin': 'https://demo.gecis360.com',
         'priority': 'u=1, i',
         'referer': 'https://demo.gecis360.com/randevu/qr.php',
@@ -86,8 +84,7 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
   @override
   void dispose() {
     _timer?.cancel();
-    _setBrightness(
-        _originalBrightness ?? 0.5); // Varsayılan parlaklık seviyesine geri dön
+    _setBrightness(_originalBrightness ?? 0.5); // Varsayılan parlaklık seviyesine geri dön
     super.dispose();
   }
 
@@ -117,8 +114,7 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
                   return LinearProgressIndicator(
                     value: 1 / 5 * val,
                     color: Colors.yellow,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Color(0xFF5664D9)),
+                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF5664D9)),
                   );
                 }),
             Center(

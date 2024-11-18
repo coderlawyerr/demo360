@@ -49,8 +49,7 @@ class _OnboardingTwoState extends State<OnboardingTwo> {
                   SizedBox(
                     height: 60, // Yüksekliği ayarladık
                     child: Align(
-                      alignment: Alignment
-                          .centerLeft, // Yazıyı sola yaslamak için Align kullanıyoruz
+                      alignment: Alignment.centerLeft, // Yazıyı sola yaslamak için Align kullanıyoruz
                       child: DefaultTextStyle(
                         style: TextStyle(
                           color: primaryColor, // Yazı rengini beyaz yaptık
@@ -60,8 +59,7 @@ class _OnboardingTwoState extends State<OnboardingTwo> {
                           repeatForever: true,
                           isRepeatingAnimation: true,
                           animatedTexts: [
-                            WavyAnimatedText(
-                                'DEMO 360 !'), // WavyAnimatedText kullanıldı
+                            WavyAnimatedText('Geçiş 360 !'), // WavyAnimatedText kullanıldı
                           ],
                         ),
                       ),

@@ -874,7 +874,7 @@ class _AppointmentViewState extends State<AppointmentView> {
 
     // Misafir kabul durumu kontrolü
     bool isMisafirKabul = service.misafirKabul == 1;
-
+  
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // Bu, modalın tam ekran olmasını sağlar.
@@ -986,6 +986,9 @@ class _AppointmentViewState extends State<AppointmentView> {
                                 ),
                               ),
                             ),
+                            ////////////////////////// grup randevusuuu
+                          
+                        
                         ],
                       ),
                     ),

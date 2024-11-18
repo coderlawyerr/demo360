@@ -54,7 +54,7 @@ class _OnboardingOneState extends State<OnboardingOne> {
                       repeatForever: true,
                       isRepeatingAnimation: true,
                       animatedTexts: [
-                        WavyAnimatedText('D E M O   3 6 0 !'),
+                        WavyAnimatedText('G E Ç İ Ş   3 6 0 !'),
                       ],
                     ),
                   ),
