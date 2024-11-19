@@ -1,4 +1,5 @@
 import 'package:armiyaapp/providers/appoinment/appoinment_provider.dart';
+import 'package:armiyaapp/providers/appoinment/membergroups_provider.dart';
 import 'package:armiyaapp/providers/appoinment/misafir_add_provider.dart';
 import 'package:armiyaapp/view/appoinment/appoinment_view.dart';
 
@@ -20,7 +21,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => AppointmentProvider()),
         ChangeNotifierProvider(create: (context) => MisafirAddProvider()),
-        
+        ChangeNotifierProvider(create: (context) => MemberGroupsProvider()),
       ],
       child: MyApp(),
     ),
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
         SfGlobalLocalizations.delegate
       ],
       supportedLocales: [Locale('tr')],
-      home: MemeberGroups(),
+      home: OnboardingOne(),
     );
   }
 }

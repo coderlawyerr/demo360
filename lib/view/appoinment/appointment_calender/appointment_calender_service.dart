@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:armiyaapp/model/usermodel.dart';
+import 'package:armiyaapp/view/appoinment/appointment_calender/model/group_details.model.dart' as GroupDetailsModel;
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -22,14 +23,10 @@ class AppointmentService {
     try {
       final response = await http.post(
         Uri.parse('$baseURL/randevu/olustur/index.php'),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept-CharSet': 'utf-8'
-        },
+        headers: {'Content-Type': 'application/x-www-form-urlencoded', 'Accept-CharSet': 'utf-8'},
         body: {
           'tesislergetir': '1',
-          'token': userModel?.kullanicibilgisi?.token ??
-              '71joQRTKKC5R86NccWJzClvNFuAj07w03rB',
+          'token': userModel?.kullanicibilgisi?.token ?? '71joQRTKKC5R86NccWJzClvNFuAj07w03rB',
         },
       );
 
@@ -41,9 +38,7 @@ class AppointmentService {
         final jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
 
         if (jsonResponse is List) {
-          return jsonResponse
-              .map((item) => FacilitySelectModel.fromJson(item))
-              .toList();
+          return jsonResponse.map((item) => FacilitySelectModel.fromJson(item)).toList();
         }
         return null;
       } else {
@@ -70,14 +65,12 @@ class AppointmentService {
         },
         body: {
           'tesisid': selectedFacilityId.toString(),
-          'hizmetsecim':
-              selectedServiceIds.toString(), // Virgülle ayrılmış string
+          'hizmetsecim': selectedServiceIds.toString(), // Virgülle ayrılmış string
           'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB',
         },
       );
 
-      if ((response.statusCode == 200 || response.statusCode == 200) &&
-          response.body.isNotEmpty) {
+      if ((response.statusCode == 200 || response.statusCode == 200) && response.body.isNotEmpty) {
         if (response.body.isEmpty) {
           throw Exception('API boş yanıt döndü.');
         }
@@ -166,9 +159,7 @@ class AppointmentService {
     List<DateTime> timeSlots = serviceTimeSlots[hizmetId] ?? [];
 
     // Hizmet bilgilerini al
-    Bilgi? service = selectedServices.firstWhere((s) =>
-        s.hizmetId ==
-        hizmetId); //firstWhereOrNull((s) => s.hizmetId == hizmetId);
+    Bilgi? service = selectedServices.firstWhere((s) => s.hizmetId == hizmetId); //firstWhereOrNull((s) => s.hizmetId == hizmetId);
 
     bool isServiceUnavailable = false;
     if (service.saatlikKapasite == 0 || service.ozelalan == 1) {
@@ -180,22 +171,14 @@ class AppointmentService {
       if (isServiceUnavailable) {
         saatDurumlari[formattedTime] = Colors.red; // Hizmet Kullanılamaz
       } else {
-        bool isBookedByUser = existingAppointments.any((r) =>
-            r.hizmetid == hizmetId &&
-            r.baslangicsaati == formattedTime &&
-            r.kullaniciid == currentUserId);
+        bool isBookedByUser = existingAppointments.any((r) => r.hizmetid == hizmetId && r.baslangicsaati == formattedTime && r.kullaniciid == currentUserId);
 
-        bool isBookedByOthers = existingAppointments.any((r) =>
-            r.hizmetid == hizmetId &&
-            r.baslangicsaati == formattedTime &&
-            r.kullaniciid != currentUserId);
+        bool isBookedByOthers = existingAppointments.any((r) => r.hizmetid == hizmetId && r.baslangicsaati == formattedTime && r.kullaniciid != currentUserId);
 
         if (isBookedByUser) {
-          saatDurumlari[formattedTime] =
-              Colors.green; // Kullanıcı tarafından alınmış
+          saatDurumlari[formattedTime] = Colors.green; // Kullanıcı tarafından alınmış
         } else if (isBookedByOthers) {
-          saatDurumlari[formattedTime] =
-              Colors.red; // Başkaları tarafından alınmış
+          saatDurumlari[formattedTime] = Colors.red; // Başkaları tarafından alınmış
         } else {
           saatDurumlari[formattedTime] = Colors.blue.shade100; // Müsait
         }
@@ -207,15 +190,9 @@ class AppointmentService {
 
   // Saat Dilimini Seçme Fonksiyonu
   void selectTimeSlot(
-      DateTime timeSlot,
-      int serviceId,
-      int currentUserId,
-      List<Bilgi> selectedServices,
-      List<Randevu> existingAppointments,
-      Map<int, int> servicePeriyots) {
+      DateTime timeSlot, int serviceId, int currentUserId, List<Bilgi> selectedServices, List<Randevu> existingAppointments, Map<int, int> servicePeriyots) {
     // Öncelikle hizmetin saatlik kapasitesini kontrol edin
-    Bilgi? service =
-        selectedServices.firstWhere((s) => s.hizmetId == serviceId);
+    Bilgi? service = selectedServices.firstWhere((s) => s.hizmetId == serviceId);
 
     if (service.saatlikKapasite == 0 || service.ozelalan == 1) {
       // Bu hizmet için randevu alınamaz
@@ -231,20 +208,14 @@ class AppointmentService {
     Randevu newAppointment = Randevu(
       baslangictarihi: timeSlot,
       bitistarihi: timeSlot.add(Duration(minutes: servicePeriyots[serviceId]!)),
-      formatlibaslangictarihi:
-          DateFormat('dd.MM.yyyy').format(timeSlot), // Formatlı tarih
-      formatlibitistarihi: DateFormat('dd.MM.yyyy')
-          .format(timeSlot.add(Duration(minutes: servicePeriyots[serviceId]!))),
+      formatlibaslangictarihi: DateFormat('dd.MM.yyyy').format(timeSlot), // Formatlı tarih
+      formatlibitistarihi: DateFormat('dd.MM.yyyy').format(timeSlot.add(Duration(minutes: servicePeriyots[serviceId]!))),
       baslangicsaati: formattedTime,
-      bitissaati: DateFormat('HH:mm')
-          .format(timeSlot.add(Duration(minutes: servicePeriyots[serviceId]!))),
+      bitissaati: DateFormat('HH:mm').format(timeSlot.add(Duration(minutes: servicePeriyots[serviceId]!))),
       kullaniciid: currentUserId,
       hizmetid: serviceId,
-      hizmetad:
-          selectedServices.firstWhere((s) => s.hizmetId == serviceId).hizmetAd,
-      kapasite: selectedServices
-          .firstWhere((s) => s.hizmetId == serviceId)
-          .saatlikKapasite,
+      hizmetad: selectedServices.firstWhere((s) => s.hizmetId == serviceId).hizmetAd,
+      kapasite: selectedServices.firstWhere((s) => s.hizmetId == serviceId).saatlikKapasite,
     );
 
     existingAppointments.add(newAppointment);
@@ -269,8 +240,7 @@ class AppointmentService {
     // Mevcut saat dilimlerini temizle
 
     for (var hizmet in selectedServices) {
-      if (hizmet.zamanlayiciList == null ||
-          hizmet.zamanlayiciList?.isEmpty == true) {
+      if (hizmet.zamanlayiciList == null || hizmet.zamanlayiciList?.isEmpty == true) {
         continue;
       }
       // Haftanın günü (1=Monday, ..., 7=Sunday) → Pazar 0 olmalı
@@ -279,11 +249,7 @@ class AppointmentService {
       // Bu güne ait zamanlayıcıyı bulma
       final schedule = hizmet.zamanlayiciList!.firstWhere(
         (zaman) => zaman.gun == selectedWeekday,
-        orElse: () => RandevuZamanlayici(
-            gun: selectedWeekday,
-            baslangicSaati: '09:00',
-            bitisSaati: '17:00',
-            periyot: 30), // Varsayılan değerler
+        orElse: () => RandevuZamanlayici(gun: selectedWeekday, baslangicSaati: '09:00', bitisSaati: '17:00', periyot: 30), // Varsayılan değerler
       );
       // Periyot değerini al
       final periyot = schedule.periyot;
@@ -292,8 +258,7 @@ class AppointmentService {
       final baslangicParts = schedule.baslangicSaati.split(':');
       final bitisParts = schedule.bitisSaati.split(':');
       if (baslangicParts.length != 2 || bitisParts.length != 2) {
-        print(
-            'Saat formatı hatalı: baslangic = ${schedule.baslangicSaati}, bitis = ${schedule.bitisSaati}');
+        print('Saat formatı hatalı: baslangic = ${schedule.baslangicSaati}, bitis = ${schedule.bitisSaati}');
         continue;
       }
       final baslangicSaat = int.tryParse(baslangicParts[0]) ?? 0;
@@ -323,10 +288,7 @@ class AppointmentService {
         startTime = startTime.add(Duration(minutes: periyot));
       }
       // Mevcut randevulara göre dolu saat dilimlerini çıkarma
-      Set<String> bookedSlots = existingAppointments
-          .where((r) => r.hizmetid == hizmet.hizmetId)
-          .map((r) => r.baslangicsaati ?? '')
-          .toSet();
+      Set<String> bookedSlots = existingAppointments.where((r) => r.hizmetid == hizmet.hizmetId).map((r) => r.baslangicsaati ?? '').toSet();
 
       Set<String> availableSlots = slots.toSet(); // Tüm slotları göster
 
@@ -346,5 +308,40 @@ class AppointmentService {
       return finalTimeSlots;
     }
     return null;
+  }
+
+  Future<GroupDetailsModel.GroupDetailsResponse?> fetchGroupDetails({
+    required int selectedFacilityId,
+    required List<int> selectedServiceIds,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseURL/randevu/olustur/index.php'),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'tesisid': selectedFacilityId.toString(),
+          'hizmetsecim': selectedServiceIds.toString(), // Virgülle ayrılmış string
+          'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB',
+        },
+      );
+
+      if ((response.statusCode == 200 || response.statusCode == 200) && response.body.isNotEmpty) {
+        if (response.body.isEmpty) {
+          throw Exception('API boş yanıt döndü.');
+        }
+
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+        log('fetchServiceDetails: jsonResponse: $jsonResponse');
+        return GroupDetailsModel.GroupDetailsResponse.fromJson(jsonResponse);
+      } else {
+        log('Servis detayları getirilemedi: ${response.toString()}');
+        return null;
+      }
+    } catch (e) {
+      log('Servis detayları getirilemedi: $e');
+      throw Exception('Servis detayları getirilemedi: $e');
+    }
   }
 }
