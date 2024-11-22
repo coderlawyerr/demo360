@@ -13,17 +13,14 @@ import 'dart:convert';
 import '../navigator/custom_navigator.dart';
 
 class LoginPage extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController(text: "root@gecis360.com");
+  final TextEditingController passwordController = TextEditingController(text: "12341234");
   final AuthService _authService = AuthService();
-
   LoginPage({super.key});
-
   Future<void> login(BuildContext context) async {
     final String email = emailController.text;
     final String password = passwordController.text;
     final AppNavigator nav = AppNavigator.instance;
-
     try {
       // AuthService üzerinden login işlemi
       final response = await _authService.login(email, password);
@@ -40,19 +37,12 @@ class LoginPage extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${user.message}')),
           );
-          SharedDataService().saveLoginData(responseData.toString());
-          // Kullanıcı verilerini Hive kutusuna kaydet
-          //      var box = Hive.box<User>('userBox');
-          //     await box.put('currentUser', user); // Kullanıcı bilgilerini kaydet
-
-          // Kullanıcı bilgilerini konsola yazdır
+          SharedDataService().saveLoginData(response.body);
 
           print("Ad Soyad: ${user.isimsoyisim}");
           print("Yetki Grubu: ${user.yetkiGrubu}");
           print("Özel Yetkiler: ${user.ozelYetkiler}");
-
           // Giriş yapan kullanıcı bilgilerini işleyin
-
           nav.push(context: context, routePage: const HomePage());
           // Giriş başarılı olursa yönlendirme
         } else {
@@ -88,10 +78,7 @@ class LoginPage extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(
                   "HOŞGELDİNİZ",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.normal,
-                      color: primaryColor),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.normal, color: primaryColor),
                 ),
               ),
               SizedBox(
@@ -99,10 +86,7 @@ class LoginPage extends StatelessWidget {
               ),
               Text(
                 "Email",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 16),
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16),
               ),
               CustomTextField(
                 suffixIcon: Icon(Icons.email, color: Colors.grey),
@@ -114,10 +98,7 @@ class LoginPage extends StatelessWidget {
               ),
               Text(
                 "Şifre",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                    fontSize: 16),
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal, fontSize: 16),
               ),
               CustomTextField(
                 suffixIcon: Icon(Icons.key_rounded, color: Colors.grey),

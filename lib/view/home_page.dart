@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'package:armiyaapp/data/app_shared_preference.dart';
 import 'package:armiyaapp/model/usermodel.dart';
-import 'package:armiyaapp/view/active_appointments.dart';
+
 import 'package:armiyaapp/view/appoinment/appoinment_view.dart';
+
 import 'package:armiyaapp/view/qr_page.dart';
 import 'package:armiyaapp/view/tabbar/tabbar.dart';
 import 'package:armiyaapp/view/login.dart';
@@ -56,12 +57,10 @@ class _HomePageState extends State<HomePage> {
   void showExitDialog() {
     showDialog(
       context: context,
-      barrierDismissible:
-          true, // Kullanıcının dialog dışında tıklayarak kapatmasına izin verir
+      barrierDismissible: true, // Kullanıcının dialog dışında tıklayarak kapatmasına izin verir
       builder: (BuildContext context) {
         return BackdropFilter(
-          filter: ImageFilter.blur(
-              sigmaX: 5.0, sigmaY: 5.0), // Arka plan bulanıklığı
+          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0), // Arka plan bulanıklığı
           child: AlertDialog(
             backgroundColor: Colors.white,
             title: Text('Çıkış Yapmak Üzeresin !'),
@@ -119,8 +118,7 @@ class _HomePageState extends State<HomePage> {
         },
         letIndexChange: (index) => true,
       ),
-      body: getSelectedPage(
-          _page), // Alt menüden seçilen sayfayı burada gösteriyoruz
+      body: getSelectedPage(_page), // Alt menüden seçilen sayfayı burada gösteriyoruz
     );
   }
 }

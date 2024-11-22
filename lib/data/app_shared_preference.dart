@@ -18,16 +18,13 @@ class SharedDataService {
   Future<UserModel?> getLoginData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final modelData = prefs.getString(userLoginKey);
+
     log(modelData.toString());
-    String correctedString = modelData
-            ?.replaceAllMapped(RegExp(r'(\w+):'), (match) => '"${match[1]}":')
-            .replaceAllMapped(
-                RegExp(r': ([^"{\[][^,]*)'), (match) => ': "${match[1]}"') ??
-        "";
-    if (correctedString.isEmpty) {
+    if (modelData == null && modelData!.isEmpty) {
       return null;
     }
-    Map<String, dynamic> jsonData = jsonDecode(correctedString);
+    ;
+    Map<String, dynamic> jsonData = jsonDecode(modelData);
 
     return UserModel.fromJson(jsonData);
   }

@@ -472,6 +472,8 @@ class Bilgi {
       zamanlayiciList: zamanlayiciList,
     );
   }
+
+  get kapasite => null;
   Map<String, dynamic> toMap() => {
         "hizmet_id": hizmetId,
         "hizmet_ad": hizmetAd,

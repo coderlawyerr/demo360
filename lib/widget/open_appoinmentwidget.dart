@@ -28,7 +28,6 @@ class OpenAppointmentWidget extends StatelessWidget {
           text,
           style: TextStyle(color: textColor),
         ),
-      
       ),
     );
   }

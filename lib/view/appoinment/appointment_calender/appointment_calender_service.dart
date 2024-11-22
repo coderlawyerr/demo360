@@ -1,3 +1,6 @@
+
+
+
 import 'dart:convert';
 import 'dart:developer';
 
@@ -16,6 +19,8 @@ import 'model/facility_model.dart';
 const String baseURL = "https://demo.gecis360.com/api";
 
 class AppointmentService {
+
+  
   List<Randevu> existingAppointments = [];
   Future<List<FacilitySelectModel>?> fetchFacilities() async {
     SharedDataService sharedAppData = SharedDataService();
@@ -79,23 +84,7 @@ class AppointmentService {
         log('fetchServiceDetails: jsonResponse: $jsonResponse');
         return CalendarInfoModel.fromJson(jsonResponse);
 
-        // if (jsonResponse['bilgi'] != null && jsonResponse['bilgi'] is List) {
-        //   selectedServices = List<Bilgi>.from(
-        //       jsonResponse['bilgi'].map((x) => Bilgi.fromMap(x)));
-
-        //   // 'randevu' listesi içerisinden mevcut randevuları çekme
-        //   if (jsonResponse['randevu'] != null &&
-        //       jsonResponse['randevu'] is List) {
-        //     List<Randevu> randevuList = List<Randevu>.from(
-        //         jsonResponse['randevu'].map((x) => Randevu.fromMap(x)));
-
-        //     _existingAppointments = randevuList.where((r) {
-        //       if (r.baslangictarihi == null) return false;
-        //       return r.baslangictarihi!.year == _selectedDate!.year &&
-        //           r.baslangictarihi!.month == _selectedDate!.month &&
-        //           r.baslangictarihi!.day == _selectedDate!.day &&
-        //           _selectedServiceIds.contains(r.hizmetid);
-        //     }).toList();
+      
       } else {
         log('Servis detayları getirilemedi: ${response.toString()}');
         return null;
@@ -344,4 +333,10 @@ class AppointmentService {
       throw Exception('Servis detayları getirilemedi: $e');
     }
   }
+
+ //  randevu ollsuturma 
+
+ 
+
+
 }

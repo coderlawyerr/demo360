@@ -599,6 +599,8 @@ class AppointmentProvider with ChangeNotifier {
   List<FacilitySelectModel> get facilities => _facilities;
   // Saat dilimi renklerini tutmak için bir harita
   Map<String, Color> slotColors = {};
+
+  get activeAppointments => null;
   void updateSlotColor(int serviceIndex, int slotIndex, Color color) {
     final service = selectedServices[serviceIndex];
     final timeSlot = serviceTimeSlots[service.hizmetId]?[slotIndex];
@@ -1129,8 +1131,3 @@ class AppointmentProvider with ChangeNotifier {
   }
 }
 
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-//////////buraya kadarrrrrrr askomm
