@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class MyTabbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Colors.white,
       body: DefaultTabController(
         animationDuration: Duration.zero,
@@ -16,12 +16,9 @@ class MyTabbar extends StatelessWidget {
           child: Column(
             children: [
               TabBar(
-                padding: EdgeInsets.only(
-                    left: 0), // Sol taraftaki boşluğu sıfırlamak için
-                indicatorPadding:
-                    EdgeInsets.zero, // İndikatör boşluğunu kaldırır
-                labelPadding: EdgeInsets.symmetric(
-                    horizontal: 20), // Sekmelerin etrafındaki boşluk
+                padding: EdgeInsets.only(left: 0), // Sol taraftaki boşluğu sıfırlamak için
+                indicatorPadding: EdgeInsets.zero, // İndikatör boşluğunu kaldırır
+                labelPadding: EdgeInsets.symmetric(horizontal: 20), // Sekmelerin etrafındaki boşluk
                 isScrollable: true, // Kaydırılabilir hale getirir
                 tabs: [
                   Tab(
@@ -34,8 +31,7 @@ class MyTabbar extends StatelessWidget {
                   ),
                   Tab(
                     icon: Icon(Icons.history),
-                    text:
-                        'İptal Edilen Randevular', // İptal edilen randevu sekmesi
+                    text: 'İptal Edilen Randevular', // İptal edilen randevu sekmesi
                   ),
                 ],
               ),
@@ -43,7 +39,7 @@ class MyTabbar extends StatelessWidget {
                 child: TabBarView(
                   children: [
                     ActiveAppointment(), // Aktif randevular sayfası
-                    PastAppointments(), // Geçmiş randevular sayfası
+                    PassAppointment(), // Geçmiş randevular sayfası
                     CanceledAppointment(), // İptal edilen randevular sayfası
                   ],
                 ),

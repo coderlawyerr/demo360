@@ -853,9 +853,9 @@ class AppointmentProvider with ChangeNotifier {
 
             _existingAppointments = randevuList.where((r) {
               if (r.baslangictarihi == null) return false;
-              return r.baslangictarihi!.year == _selectedDate!.year &&
-                  r.baslangictarihi!.month == _selectedDate!.month &&
-                  r.baslangictarihi!.day == _selectedDate!.day &&
+              return r.baslangictarihi?.year == _selectedDate?.year &&
+                  r.baslangictarihi?.month == _selectedDate?.month &&
+                  r.baslangictarihi?.day == _selectedDate?.day &&
                   _selectedServiceIds.contains(r.hizmetid);
             }).toList();
           }
@@ -1130,4 +1130,3 @@ class AppointmentProvider with ChangeNotifier {
     }
   }
 }
-

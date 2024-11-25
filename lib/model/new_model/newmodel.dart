@@ -653,6 +653,7 @@ class RandevuZamanlayici {
     required this.gun,
     required this.baslangicSaati,
     required this.bitisSaati,
+
     required this.periyot,
   });
 

@@ -1,15 +1,12 @@
-
-
 import 'package:armiyaapp/model/new_model/newmodel.dart';
 import 'package:flutter/material.dart';
 
-class  MemberGroupsProvider with ChangeNotifier {
+class MemberGroupsProvider with ChangeNotifier {
   List<Bilgi> _bilgiler = [];
   bool _isLoading = true;
 
-  List<Bilgi> get  bilgiler  => _bilgiler;
-  bool get  isLoading => _isLoading;
-
+  List<Bilgi> get bilgiler => _bilgiler;
+  bool get isLoading => _isLoading;
 
   Future<void> fetchMemberGroups() async {
     // try{
@@ -20,6 +17,6 @@ class  MemberGroupsProvider with ChangeNotifier {
     //     final data = json.decode(response.body);
     //   }
     // }catch(eror){
-      print("Hata:");
-    }
+    print("Hata:");
   }
+}
