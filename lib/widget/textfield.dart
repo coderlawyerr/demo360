@@ -26,6 +26,7 @@ class CustomTextField extends StatelessWidget {
       width:
           MediaQuery.of(context).size.width / 1, // Ekranın 3'te biri genişlikte
       child: TextFormField(
+        
         controller: controller,
         obscureText: isPassword,
         keyboardType:

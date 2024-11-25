@@ -1,6 +1,8 @@
+import 'package:armiyaapp/model/usermodel.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService {
+   UserModel? myusermodel;
   final String baseUrl = 'https://demo.gecis360.com/api/login/index.php';
 
   // Login fonksiyonu

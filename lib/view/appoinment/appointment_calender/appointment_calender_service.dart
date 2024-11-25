@@ -216,6 +216,8 @@ class AppointmentService {
       existingAppointments: existingAppointments,
       servicePeriyots: servicePeriyots,
     ); // Saat dilimlerini yeniden oluştur
+    // Seçilen saat dilimini onayla
+  
   }
 
   List<DateTime>? generateTimeSlots(
@@ -334,7 +336,7 @@ class AppointmentService {
     }
   }
 
- //  randevu ollsuturma 
+ 
 
  
 

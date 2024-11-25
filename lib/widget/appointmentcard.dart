@@ -5,10 +5,6 @@
 import 'package:intl/intl.dart';
  import '../const/const.dart';
 
- import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import '../const/const.dart';
-
 class AppointmentCard extends StatelessWidget {
   final String title;
   final String subtitle;

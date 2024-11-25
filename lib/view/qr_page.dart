@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:armiyaapp/data/app_shared_preference.dart';
+import 'package:armiyaapp/model/usermodel.dart';
 import 'package:flutter/material.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:http/http.dart' as http;
@@ -15,6 +16,7 @@ class QRImageFetcher extends StatefulWidget {
 }
 
 class _QRImageFetcherState extends State<QRImageFetcher> {
+  late final UserModel? user;
   Timer? _timer;
   final ValueNotifier<int> _counter = ValueNotifier<int>(0);
   String? _imageUrl;
@@ -26,8 +28,8 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
   @override
   void initState() {
     super.initState();
-    _fetchImage();
-    _setBrightness(1.0);
+
+    _setBrightness(1.0,true);
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _counter.value++;
@@ -46,17 +48,20 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
     _originalBrightness = await ScreenBrightness().application; // Mevcut parlaklığı al
   }
 
-  Future<void> _setBrightness(double brightness) async {
+  Future<void> _setBrightness(double brightness,isInitUser) async {
+    if(isInitUser){    user = await SharedDataService().getLoginData();}
+
     await _getOriginalBrightness();
+
     try {
       await ScreenBrightness().setSystemScreenBrightness(brightness);
+      _fetchImage();
     } catch (e) {
       print("Parlaklık ayarlanırken hata oluştu: $e");
     }
   }
 
   Future<void> _fetchImage() async {
-    final user = await SharedDataService().getLoginData();
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
@@ -75,7 +80,7 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
         'x-requested-with': 'XMLHttpRequest',
       },
-      body: {'qrolustur': '1', 'id': user?.kullanicibilgisi?.id.toString()},
+      body: {'qrolustur': "true", 'id': user?.kullanicibilgisi?.id.toString()},
     );
 
     print('Response status: ${response.statusCode}');
@@ -84,9 +89,13 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> json = jsonDecode(response.body);
-      setState(() {
+
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        setState(() {
         _imageUrl = json["link"];
       });
+      },);
+      
     } else {
       print('Error: ${response.statusCode}');
     }
@@ -95,7 +104,7 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
   @override
   void dispose() {
     _timer?.cancel();
-    _setBrightness(0.1); // Varsayılan parlaklık seviyesine geri dön
+    _setBrightness(0.1,false); // Varsayılan parlaklık seviyesine geri dön
     super.dispose();
   }
 

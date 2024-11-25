@@ -3,9 +3,7 @@ import 'dart:convert' as http;
 import 'package:armiyaapp/data/app_shared_preference.dart';
 import 'package:armiyaapp/providers/appoinment/misafir_add_provider.dart';
 import 'package:armiyaapp/services/create.dart';
-import 'package:armiyaapp/view/active_appointments.dart';
-import 'package:armiyaapp/view/home_page.dart';
-import 'package:armiyaapp/view/tabbar/tabbar.dart';
+
 import 'package:armiyaapp/widget/group_add.dart';
 import 'package:armiyaapp/widget/misafir_add.dart';
 import 'package:http/http.dart' as http;
@@ -131,7 +129,7 @@ class _AppointmentViewState extends State<AppointmentView> {
                     ),
 
                     MultiDropdown(
-                      fieldDecoration: FieldDecoration(hintText: "Hasan seç knk"),
+                      fieldDecoration: const FieldDecoration(hintText: "Hizmet Seçiniz!"),
                       items: provider.services.map((service) {
                         return DropdownItem<int>(
                           value: service.hizmetId!,
@@ -141,7 +139,14 @@ class _AppointmentViewState extends State<AppointmentView> {
                       onSelectionChange: (List<int> selectedIds) async {
                         provider.resetToCalendar();
                         provider.setSelectedServices(selectedIds);
-                        selectedHizmetID = selectedIds.last;
+
+                        // Check if selectedIds is not empty before accessing the last element
+                        if (selectedIds.isNotEmpty) {
+                          selectedHizmetID = selectedIds.last; // Only assign if there are selected IDs
+                        } else {
+                          // Handle the case where no services are selected, if necessary
+                          selectedHizmetID = null; // or some default value
+                        }
                       },
                       selectedItemBuilder: (selectedItems) {
                         // Seçilen hizmetlerin nasıl görüneceğini burada özelleştirebilirsiniz
@@ -303,6 +308,9 @@ class _AppointmentViewState extends State<AppointmentView> {
                                             final formattedStartTime = DateFormat('HH:mm').format(timeSlot);
                                             final formattedEndTime = DateFormat('HH:mm').format(bitisSaati);
 
+                                            // Onaylanan saat kontrolü
+                                            bool isDisabled = provider.confirmedTimeSlot != null &&
+                                                provider.confirmedTimeSlot != timeSlot; // Eğer başka bir saat onaylandıysa, diğer saatleri devre dışı bırak
                                             // Geçmiş saat dilimlerini kontrol et
                                             bool isPast = timeSlot.isBefore(DateTime.now());
 
@@ -317,6 +325,8 @@ class _AppointmentViewState extends State<AppointmentView> {
                                                 onTap: isPast || slotColor == Colors.green || slotColor == Colors.red
                                                     ? null // Geçmiş saatler, kullanıcı tarafından alınmış ve başkaları tarafından alınmış saatler için tıklamayı devre dışı bırak
                                                     : () {
+                                                        //
+                                                        provider.selectTimeSlot(timeSlot, serviceId);
                                                         if (provider.serviceTimeSlots.containsValue([timeSlot])) {
                                                           return;
                                                         }
@@ -436,7 +446,7 @@ class _AppointmentViewState extends State<AppointmentView> {
                               border: Border.all(color: Color(0xFF5664D9)),
                             ),
                             child: Text(
-                              'Mevcut Randevu: 0',
+                              'Mevcut Randevu: ${provider.existingAppointments.where((r) => r.hizmetid == service.hizmetId).length}', // Current appointments count
                               style: TextStyle(fontSize: 14, color: Color(0xFF5664D9)),
                             ),
                           ),
@@ -634,6 +644,24 @@ class _AppointmentViewState extends State<AppointmentView> {
                               baslangicTarihi: selectedTime.toString().replaceAll("T", " ") ?? '2024-11-19 15:00', // Başlangıç tarihi
                               bitisTarihi: selectedTime.toString().replaceAll("T", " ") ?? '2024-11-20 15:00',
                             );
+                            // randevu bılgılerını guncelle
+
+                            if (context.read<MisafirAddProvider>().misafirList.isEmpty) {
+                              provider.updateSlotColor(serviceIndex, slotIndex, Colors.green);
+                              // kalan randevu sayısını azalt
+                              if (service.saatlikKapasite != null && service.saatlikKapasite! > 0) {
+                                setState(() {
+                                  service.saatlikKapasite = service.saatlikKapasite! - 1; // Kalan randevu sayısını bir azalt
+                                });
+                              }
+
+                              // Eğer kalan randevu sayısı sıfırsa, slot rengini kırmızı yap
+                              if (service.saatlikKapasite == 0) {
+                                provider.updateSlotColor(serviceIndex, slotIndex, Colors.red);
+                              }
+                            } else {
+                              provider.updateSlotColor(serviceIndex, slotIndex, Colors.yellow);
+                            }
 
                             // Randevu bilgilerini güncelle
                             if (context.read<MisafirAddProvider>().misafirList.isEmpty) {
@@ -650,13 +678,13 @@ class _AppointmentViewState extends State<AppointmentView> {
                             // Misafir listesini temizle
                             context.read<MisafirAddProvider>().clearMisafirList();
 
-                            // Randevu bilgilerini yeni bir sayfada göster
                             if (res == "SUCCESS") {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomePage(),
-                                ),
-                              );
+                              // Randevu onaylandı
+                              provider.decreaseCapacity(selectedHizmetID!); // Decrease the capacity
+                              setState(() {
+                                isConfirmed = true; // Update confirmation state
+                              });
+                              // Navigate or update UI as needed
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Zaten bir randevunuz mevcut!")));
                             }

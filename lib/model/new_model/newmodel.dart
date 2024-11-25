@@ -405,7 +405,7 @@ class Bilgi {
   final int? hizmetId;
   final String? hizmetAd;
   final String? hizmetTuru;
-  final int? saatlikKapasite;
+   int? saatlikKapasite;
   final String? randevuZamanlayici;
   final int? ozelalan;
   final int? limitsizkapasite;

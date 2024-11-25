@@ -16,6 +16,8 @@ class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController(text: "root@gecis360.com");
   final TextEditingController passwordController = TextEditingController(text: "12341234");
   final AuthService _authService = AuthService();
+  UserModel? myusermodel;
+
   LoginPage({super.key});
   Future<void> login(BuildContext context) async {
     final String email = emailController.text;
@@ -27,9 +29,8 @@ class LoginPage extends StatelessWidget {
       print(response);
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-
-        // Gelen yanıtı User modeline dönüştür
         UserModel user = UserModel.fromJson(responseData);
+        // Gelen yanıtı User modeline dönüştür
 
         // Yanıtın durumunu kontrol et
         if (user.status == true) {

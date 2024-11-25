@@ -11,6 +11,10 @@ import 'package:flutter/material.dart';
 
 import 'package:armiyaapp/widget/appointmentcard.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+
+import '../providers/appoinment/appoinment_provider.dart';
 
 class ActiveAppointment extends StatefulWidget {
   const ActiveAppointment({super.key});
@@ -21,7 +25,8 @@ class ActiveAppointment extends StatefulWidget {
 
 class _ActiveAppointmentState extends State<ActiveAppointment> {
   UserModel? myusermodel;
-  late final Future<List<RandevuModel>?> fetchRandevuList4;
+  AppointmentProvider provider = AppointmentProvider();
+ 
   late final Future<List<DenemeCard>?> cardim;
   List<RandevuModel>? aktifrandevular;
   kullanicibilgisi? kullanicibilgim;
@@ -64,7 +69,6 @@ class _ActiveAppointmentState extends State<ActiveAppointment> {
     }
   }
 
- 
   /////
   Future<List<RandevuModel>?> fetchRandevuList() async {
     await getUser();
@@ -73,16 +77,21 @@ class _ActiveAppointmentState extends State<ActiveAppointment> {
       'Authorization': 'Basic cm9vdEBnZWNpczM2MC5jb206MTIzNDEyMzQ=',
       'PHPSESSID': '0ms1fk84dssk9s3mtfmmdsjq24',
     };
-    final body = {'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', 'aktifrandevular': '1', 'kullanici_id': "1"};
+    final body = {'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', 'aktifrandevular': '1', 'kullanici_id': myusermodel?.kullanicibilgisi?.id.toString()};
 
     try {
       final response = await http.post(Uri.parse(url), headers: headers, body: body);
 
       if (response.statusCode == 200) {
+        aktifrandevular = [];
         List<dynamic> jsonData = json.decode(response.body);
-        aktifrandevular = jsonData.map((item) => RandevuModel.fromJson(item)).toList();
+        aktifrandevular?.addAll(jsonData.map((item) => RandevuModel.fromJson(item)).toList());
+
         return aktifrandevular;
-      } else {}
+
+      } else {
+        return [];
+      }
     } catch (e) {
       throw Exception('İstek sırasında hata oluştu: $e');
     }
@@ -138,16 +147,31 @@ class _ActiveAppointmentState extends State<ActiveAppointment> {
 
   @override
   void initState() {
-    fetchRandevuList4 = fetchRandevuList();
+  init();
     cardim = deneme();
     super.initState();
   }
 
+init ()async{
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       provider = Provider.of<AppointmentProvider>(context, listen: false);
+       provider.fetchServices(24);
+      provider.fetchFacilities().catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Tesisler alınamadı: $error')),
+        );
+      });
+    });
+  
+  
+  await deneme(); await fetchRandevuList(); setState(() {
+  
+});}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      body: SizedBox(
         child: Padding(
           padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
           child: Column(
@@ -157,63 +181,33 @@ class _ActiveAppointmentState extends State<ActiveAppointment> {
                 "Randevularınızı, randevu gününü başlangıç saatinden en geç 60 dakika öncesine kadar iptal edebilirsiniz",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: Colors.grey),
               ),
-              SizedBox(height: 20),
+            
 
-              ///  Text(myusermodel?.isimsoyisim.toString() ?? "isim yok"),
-              // Text(myusermodel?.kullanicibilgisi?.id.toString() ?? "isim yok"),
-              FutureBuilder<List<DenemeCard>?>(
-                  future: cardim,
-                  builder: (
-                    context,
-                    snapshot2,
-                  ) {
-                    if (snapshot2.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot2.hasError) {
-                      return Center(child: SelectableText('Hata: ${snapshot2.error}'));
-                    } else if (snapshot2.hasData) {
-                      return FutureBuilder<List<RandevuModel>?>(
-                        future: fetchRandevuList4,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Center(child: Text('Hata: ${snapshot.error}'));
-                          } else if (snapshot.hasData) {
-                            final data = snapshot.data!;
-                            final data2 = snapshot2.data!;
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: data2.length,
-                              itemBuilder: (context, index) {
-                                final appointment = data[index];
-                                final bet = data2[index];
-                                print(bet?.hizmetbilgisimodel?.randevuZamanlayici?.toString() ?? "");
-                                print(bet.kullanicibilgisimodel!.isimsoyisim);
-                                return AppointmentCard(
-                                  buttonText: "İptal Edilen Randevu",
-                                  title: bet.tesisbilgisimodel?.tesisAd ?? "",
-                                  subtitle: bet.hizmetbilgisimodel?.hizmetAd ?? "",
-                                  date: appointment.timestamp?.split(" ").first.toString() ?? "boş",
-                                  startTime:
-                                      "${bet.hizmetbilgisimodel?.randevuZamanlayici?.baslangicSaati ?? "boş"}-${bet.hizmetbilgisimodel?.randevuZamanlayici?.bitisSaati ?? ""}",
-                                  endTime: bet.hizmetbilgisimodel?.aktifsaatBitis ?? "",
-                                  onButtonPressed: () {
-                                    // Randevuya tıklama işlemi
-                                  },
-                                );
-                              },
-                            );
-                          } else {
-                            return const Center(child: Text('iptal edilen randevu yok'));
-                          }
-                        },
-                      );
-                    } else {
-                      return Center(child: Text("iptal yok "));
-                    }
-                  }),
-
+                  Expanded(
+                    child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: aktifrandevular?.length??0,
+                                itemBuilder: (context, index) {
+                                
+                                  final randevu = aktifrandevular?[index];
+                                  
+                               
+                                  return AppointmentCard(
+                                    buttonText: "Randevuyu iptal et!",
+                                    title: provider.facilities.where((e)=>e.tesisId==randevu?.tesisId).first.tesisAd??"",// appointment?.tesisbilgisimodel?.tesisAd ??"",
+                                    subtitle: provider.services.isEmpty==true? "": provider.services .where((e)=>e.hizmetId==randevu?.hizmetId).first.hizmetAd??"", // appointment?.hizmetbilgisimodel?.hizmetAd ??"",
+                                    date: randevu?.baslangicTarihi?.split(" ").first.toString() ?? "boş",
+                                    startTime:
+                                        "${randevu?.baslangicTarihi?.split(" ").last ?? "boş"}-${randevu?.bitisTarihi?.split(" ").last ?? ""}",
+                                    endTime: randevu?.bitisTarihi?.split(" ").first ?? "",
+                                    onButtonPressed: () {
+                                      // Randevuya tıklama işlemi
+                                    },
+                                  );
+                                },
+                              ),
+                  ),
+                        
               // Randevu kartlarını listele
             ],
           ),
