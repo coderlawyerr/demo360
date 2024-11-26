@@ -7,6 +7,7 @@ class Randevu {
   final String? baslangicSaati;
   final String? bitisSaati;
   final int? kullaniciId;
+  final int ? misafirdurumu;
   final int? hizmetId;
   final String? hizmetAd;
   final int? kapasite;
@@ -20,6 +21,7 @@ class Randevu {
     this.baslangicSaati,
     this.bitisSaati,
     this.kullaniciId,
+    this.misafirdurumu,///////son ekelnene 
     this.hizmetId,
     this.hizmetAd,
     this.kapasite,
@@ -33,7 +35,9 @@ class Randevu {
         baslangicSaati: json["baslangicsaati"],
         bitisSaati: json["bitissaati"],
         kullaniciId: json["kullaniciid"],
+          misafirdurumu :json["misafirdurumu"],
         hizmetId: json["hizmetid"],
+      
         hizmetAd: json["hizmetad"],
         kapasite: json["kapasite"],
       );
@@ -46,7 +50,9 @@ class Randevu {
         "baslangicsaati": baslangicSaati,
         "bitissaati": bitisSaati,
         "kullaniciid": kullaniciId,
-        "hizmetid": hizmetId,
+        "misafirdurumu":misafirdurumu,
+        "hizmetid": hizmetId, 
+
         "hizmetad": hizmetAd,
         "kapasite": kapasite,
       };

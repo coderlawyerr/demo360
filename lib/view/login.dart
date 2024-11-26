@@ -13,8 +13,8 @@ import 'dart:convert';
 import '../navigator/custom_navigator.dart';
 
 class LoginPage extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController(text: "root@gecis360.com");
-  final TextEditingController passwordController = TextEditingController(text: "12341234");
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final AuthService _authService = AuthService();
   UserModel? myusermodel;
 

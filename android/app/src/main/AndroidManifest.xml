@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/> <!-- Gerekli olabilir -->
 
     <application
-        android:label="armiyaapp"
+        android:label="Geçiş360"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

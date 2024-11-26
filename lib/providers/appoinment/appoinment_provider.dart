@@ -10,13 +10,20 @@ import 'package:armiyaapp/model/new_model/newmodel.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class AppointmentProvider with ChangeNotifier {
-  void decreaseCapacity(int serviceId) {
-    final service = _selectedServices.firstWhere((s) => s.hizmetId == serviceId);
-    if (service.saatlikKapasite != null && service.saatlikKapasite! > 0) {
-      service.saatlikKapasite = service.saatlikKapasite! - 1;
-      notifyListeners(); // Notify listeners for UI update
-    }
+
+// Belirtilen hizmetin kapasitesini azaltan bir fonksiyon
+void decreaseCapacity(int serviceId) {
+  // İlgili hizmeti _selectedServices listesinden bul
+  final service = _selectedServices.firstWhere((s) => s.hizmetId == serviceId);
+  
+  // Eğer hizmetin saatlik kapasitesi null değilse ve sıfırdan büyükse
+  if (service.saatlikKapasite != null && service.saatlikKapasite! > 0) {
+    // Saatlik kapasiteyi bir azalt
+    service.saatlikKapasite = service.saatlikKapasite! - 1;
+    // Dinleyicilere değişiklik olduğunu bildir (UI'yi güncellemek için)
+    notifyListeners();
   }
+}
 
   DateTime? confirmedTimeSlot; // Onaylanan saat
   bool _isLoading = false;
@@ -543,6 +550,21 @@ class AppointmentProvider with ChangeNotifier {
     );
 
     _existingAppointments.add(newAppointment);
+    // Seçilen saat dilimini diğer hizmetlerde sarı yap
+    _selectedServices.forEach((otherService) {
+      // Diğer hizmetler için saat dilimlerini güncelle
+      if (otherService.hizmetId != serviceId) {
+        // Diğer hizmetin saat dilimlerini kontrol et
+        List<DateTime> otherServiceSlots = _serviceTimeSlots[otherService.hizmetId!] ?? [];
+        for (var slot in otherServiceSlots) {
+          if (slot.isAtSameMomentAs(timeSlot)) {
+            // Eğer saat dilimi aynıysa, sarı olarak işaretle
+            slotColors[formattedTime] = Colors.yellow;
+          }
+        }
+      }
+    });
+
     generateTimeSlots(); // Saat dilimlerini yeniden oluştur
     notifyListeners();
 
