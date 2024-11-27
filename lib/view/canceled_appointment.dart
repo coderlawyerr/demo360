@@ -6,7 +6,6 @@ import 'package:armiyaapp/model/cancelappointment.dart';
 import 'package:armiyaapp/model/deneme.dart';
 import 'package:armiyaapp/model/hizmet_bilgisi.dart';
 import 'package:armiyaapp/model/kullanici_bilgisi.dart';
-import 'package:armiyaapp/model/passive_model.dart';
 import 'package:armiyaapp/model/tesisbilgisi.dart';
 import 'package:armiyaapp/model/usermodel.dart';
 import 'package:armiyaapp/widget/appointmentcard.dart';
@@ -16,18 +15,19 @@ import 'package:http/http.dart' as http;
 class CanceledAppointment extends StatefulWidget {
   const CanceledAppointment({super.key});
 
+  @override
   State<CanceledAppointment> createState() => _CanceledAppointment();
 }
 
 class _CanceledAppointment extends State<CanceledAppointment> {
   UserModel? myusermodel;
   late final Future<List<Mycancelappointment>?> fetchcancelappointment4;
-  late final Future<List<DenemeCard>?> cardim;
+  // late final Future<List<DenemeCard>?> cardim;
   List<Mycancelappointment>? iptaledilenrandevular;
-  kullanicibilgisi? kullanicibilgim;
-  hizmetbilgisi? hizmetbilgim;
-  tesisbilgisi? tesisbilgim;
-  List<DenemeCard> denemecardim = [];
+  Kullanicibilgisi? kullanicibilgim;
+  Hizmetbilgisi? hizmetbilgim;
+  Tesisbilgisi? tesisbilgim;
+  Map<int, DenemeCard> denemecardim = {};
 
   getUser() async {
     myusermodel = await SharedDataService().getLoginData();
@@ -54,62 +54,64 @@ class _CanceledAppointment extends State<CanceledAppointment> {
     } catch (e) {
       throw Exception('İstek sırasında hata oluştu: $e');
     }
+    return null;
   }
 
   /////
-  Future<List<DenemeCard>?> deneme() async {
+  Future<DenemeCard> deneme({required Mycancelappointment appointment}) async {
     await getUser();
     const url = 'https://demo.gecis360.com/api/genel/index.php';
     const headers = {
       'Authorization': 'Basic cm9vdEBnZWNpczM2MC5jb206MTIzNDEyMzQ=',
       'PHPSESSID': '0ms1fk84dssk9s3mtfmmdsjq24',
     };
-    final body = {'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', 'kullanicibilgisi': '1'};
-    final body1 = {'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', 'tesisbilgisi': '6'};
-    final body2 = {'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', 'hizmetbilgisi': '25'};
+    final body = {'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', 'kullanicibilgisi': appointment.kullaniciId?.toString()};
+    final body1 = {'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', 'tesisbilgisi': appointment.tesisId?.toString()};
+    final body2 = {'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', 'hizmetbilgisi': appointment.hizmetId?.toString()};
+
     try {
-      final response = await http.post(Uri.parse(url), headers: headers, body: body);
-      debugPrint("response" + response.body);
+      if (denemecardim[appointment.randevuId!] != null) return denemecardim[appointment.randevuId!]!;
+
+      var results = await Future.wait([
+        http.post(Uri.parse(url), headers: headers, body: body),
+        http.post(Uri.parse(url), headers: headers, body: body1),
+        http.post(Uri.parse(url), headers: headers, body: body2),
+      ]);
+
+      final response = results[0];
       if (response.statusCode == 200) {
         dynamic jsonData = json.decode(response.body);
-        kullanicibilgim = kullanicibilgisi.fromJson(jsonData);
+        kullanicibilgim = Kullanicibilgisi.fromJson(jsonData);
       }
 
-      final response1 = await http.post(Uri.parse(url), headers: headers, body: body1);
-      print("response1" + response1.body.toString());
-      if (response1.statusCode == 200) {
+      final response1 = results[1];
+      if (response1.statusCode == 200 && response1.body != "false") {
         dynamic jsonData = json.decode(response1.body);
-        tesisbilgim = tesisbilgisi.fromJson(jsonData);
+        tesisbilgim = Tesisbilgisi.fromJson(jsonData);
       }
-      final response2 = await http.post(Uri.parse(url), headers: headers, body: body2);
-      print("response2" + response2.body.toString());
-      if (response2.statusCode == 200) {
+
+      final response2 = results[2];
+      if (response2.statusCode == 200 && response2.body != "false") {
         dynamic jsonData = json.decode(response2.body);
-        hizmetbilgim = hizmetbilgisi.fromJson(jsonData);
+        hizmetbilgim = Hizmetbilgisi.fromJson(jsonData);
       }
-      /*for (var i = 0; i < hizmetbilgim!.length; i++) {
-        DenemeCard gelen = DenemeCard();
-        gelen.kullanicibilgisimodel = kullanicibilgim;
-        gelen.hizmetbilgisimodel = hizmetbilgim![i];
-        gelen.tesisbilgisimodel = tesisbilgim![i];
-        denemecardim!.add(gelen);
-      }*/
+
       DenemeCard gelen = DenemeCard();
       gelen.kullanicibilgisimodel = kullanicibilgim;
       gelen.hizmetbilgisimodel = hizmetbilgim;
       gelen.tesisbilgisimodel = tesisbilgim;
-      denemecardim.add(gelen);
-      return denemecardim;
+
+      denemecardim[appointment.randevuId!] = gelen;
+      return gelen;
     } catch (e) {
       throw Exception('İstek sırasında hata oluştu: $e');
     }
   }
 
-
   @override
   void initState() {
     fetchcancelappointment4 = canceledRandevuList();
-    cardim = deneme();
+    // cardim = deneme();
     super.initState();
   }
 
@@ -117,70 +119,68 @@ class _CanceledAppointment extends State<CanceledAppointment> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // Sola yaslama
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start, // Sol tarafa yaslama
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              FutureBuilder<List<DenemeCard>?>(
-                  future: cardim,
-                  builder: (
-                    context,
-                    snapshot2,
-                  ) {
-                    if (snapshot2.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if (snapshot2.hasError) {
-                      return Center(child: SelectableText('Hata: ${snapshot2.error}'));
-                    } else if (snapshot2.hasData) {
-                      return FutureBuilder<List<Mycancelappointment>?>(
-                        future: fetchcancelappointment4,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Center(child: Text('Hata: ${snapshot.error}'));
-                          } else if (snapshot.hasData) {
-                            final data = snapshot.data!;
-                            final data2 = snapshot2.data!;
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: data2.length,
-                              itemBuilder: (context, index) {
-                                final appointment = data[index];
-                                final bet = data2[index];
-                                print(bet.kullanicibilgisimodel!.isimsoyisim);
+      body: Padding(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start, // Sola yaslama
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Expanded(
+              child: FutureBuilder<List<Mycancelappointment>?>(
+                future: fetchcancelappointment4,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Hata: ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    final data = snapshot.data!;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        final appointment = data[index];
+                        return FutureBuilder<DenemeCard?>(
+                            future: deneme(appointment: appointment),
+                            builder: (context, snapshot2) {
+                              if (snapshot2.connectionState == ConnectionState.waiting) {
+                                return Center(
+                                    child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: CircularProgressIndicator(),
+                                ));
+                              } else if (snapshot2.hasError) {
+                                return Center(child: Text('Hata: ${snapshot2.error}'));
+                              } else if (snapshot2.hasData) {
+                                final data2 = snapshot2.data!;
+                                final bet = data2;
+
                                 return AppointmentCard(
                                   buttonText: "İptal Edilen Randevu",
-                                  title: bet.tesisbilgisimodel!.tesisAd ?? "",
-                                  subtitle: bet.hizmetbilgisimodel!.hizmetAd ?? "",
-                                  date: appointment?.timestamp?.split(" ").first.toString() ?? "",
-                                  startTime: bet.hizmetbilgisimodel!.aktifsaatBaslangic ?? "",
-                                  endTime: bet.hizmetbilgisimodel!.aktifsaatBitis ?? "",
+                                  title: bet.tesisbilgisimodel?.tesisAd ?? "",
+                                  subtitle: bet.hizmetbilgisimodel?.hizmetAd ?? "",
+                                  date: appointment.timestamp?.split(" ").first.toString() ?? "",
+                                  startTime: bet.hizmetbilgisimodel?.aktifsaatBaslangic ?? "",
+                                  endTime: bet.hizmetbilgisimodel?.aktifsaatBitis ?? "",
                                   onButtonPressed: () {
                                     // Randevuya tıklama işlemi
                                   },
                                 );
-                              },
-                            );
-                          } else {
-                            return Center(child: Text('iptal edilen randevu yok'));
-                          }
-                        },
-                      );
-                    } else {
-                      return Center(child: Text("iptal yok "));
-                    }
-                  }),
-            ],
-          ),
+                              } else {
+                                return Center(child: Text('Veri bulunamadı'));
+                              }
+                            });
+                      },
+                    );
+                  } else {
+                    return Center(child: Text('Veri bulunamadı'));
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

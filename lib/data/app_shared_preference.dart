@@ -20,10 +20,10 @@ class SharedDataService {
     final modelData = prefs.getString(userLoginKey);
 
     log(modelData.toString());
-    if (modelData == null && modelData!.isEmpty) {
+    if (modelData == null || modelData.isEmpty) {
       return null;
     }
-    ;
+
     Map<String, dynamic> jsonData = jsonDecode(modelData);
 
     return UserModel.fromJson(jsonData);

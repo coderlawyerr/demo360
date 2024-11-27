@@ -1,9 +1,6 @@
-
-
-
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
- import '../const/const.dart';
+import '../const/const.dart';
 
 class AppointmentCard extends StatelessWidget {
   final String title;
@@ -56,7 +53,7 @@ class AppointmentCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildInfoBox((date), Icons.calendar_today),
+                _buildInfoBox((date.split("-").reversed.join("-")), Icons.calendar_today),
                 _buildInfoBox(startTime, Icons.access_time),
               ],
             ),
@@ -66,8 +63,7 @@ class AppointmentCard extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 193, 196, 231),
                 shape: RoundedRectangleBorder(
-                  side: const BorderSide(
-                      width: 1, color: Color.fromARGB(255, 70, 88, 255)),
+                  side: const BorderSide(width: 1, color: Color.fromARGB(255, 70, 88, 255)),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -81,6 +77,7 @@ class AppointmentCard extends StatelessWidget {
       ),
     );
   }
+
   // Tarihi formatlayan fonksiyon (API'den gelen String'i işler)
   String _formatDate(String date) {
     try {
@@ -93,7 +90,8 @@ class AppointmentCard extends StatelessWidget {
 
   // Saat aralığını formatlayan fonksiyon
   String _formatTimeRange(String start, String end) {
-    try {/*
+    try {
+      /*
       final parsedStart = DateTime.parse('1970-01-01 $start:00');
       final parsedEnd = DateTime.parse('1970-01-01 $end:00');
       final formattedStart = DateFormat('HH:mm').format(parsedStart);

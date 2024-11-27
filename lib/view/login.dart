@@ -12,13 +12,26 @@ import 'dart:convert';
 
 import '../navigator/custom_navigator.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+
+  LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final AuthService _authService = AuthService();
   UserModel? myusermodel;
 
-  LoginPage({super.key});
+  @override
+  initState() {
+    SharedDataService().removeUserData();
+    super.initState();
+  }
+
   Future<void> login(BuildContext context) async {
     final String email = emailController.text;
     final String password = passwordController.text;

@@ -3,9 +3,9 @@ import 'package:armiyaapp/model/kullanici_bilgisi.dart';
 import 'package:armiyaapp/model/tesisbilgisi.dart';
 
 class DenemeCard {
-  hizmetbilgisi? hizmetbilgisimodel;
-  kullanicibilgisi? kullanicibilgisimodel;
-  tesisbilgisi? tesisbilgisimodel;
+  Hizmetbilgisi? hizmetbilgisimodel;
+  Kullanicibilgisi? kullanicibilgisimodel;
+  Tesisbilgisi? tesisbilgisimodel;
 
   DenemeCard({
     this.hizmetbilgisimodel,

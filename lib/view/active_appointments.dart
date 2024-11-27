@@ -26,12 +26,12 @@ class ActiveAppointment extends StatefulWidget {
 class _ActiveAppointmentState extends State<ActiveAppointment> {
   UserModel? myusermodel;
   AppointmentProvider provider = AppointmentProvider();
- 
+
   late final Future<List<DenemeCard>?> cardim;
   List<RandevuModel>? aktifrandevular;
-  kullanicibilgisi? kullanicibilgim;
-  hizmetbilgisi? hizmetbilgim;
-  tesisbilgisi? tesisbilgim;
+  Kullanicibilgisi? kullanicibilgim;
+  Hizmetbilgisi? hizmetbilgim;
+  Tesisbilgisi? tesisbilgim;
   List<DenemeCard> denemecardim = [];
 
   getUser() async {
@@ -77,7 +77,7 @@ class _ActiveAppointmentState extends State<ActiveAppointment> {
       'Authorization': 'Basic cm9vdEBnZWNpczM2MC5jb206MTIzNDEyMzQ=',
       'PHPSESSID': '0ms1fk84dssk9s3mtfmmdsjq24',
     };
-    final body = {'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', 'aktifrandevular': '1', 'kullanici_id': myusermodel?.kullanicibilgisi?.id.toString()};
+    final body = {'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', 'aktifrandevular': '1', 'kullanici_id': myusermodel?.id?.toString() ?? ""};
 
     try {
       final response = await http.post(Uri.parse(url), headers: headers, body: body);
@@ -88,7 +88,6 @@ class _ActiveAppointmentState extends State<ActiveAppointment> {
         aktifrandevular?.addAll(jsonData.map((item) => RandevuModel.fromJson(item)).toList());
 
         return aktifrandevular;
-
       } else {
         return [];
       }
@@ -112,20 +111,20 @@ class _ActiveAppointmentState extends State<ActiveAppointment> {
       debugPrint("response${response.body}");
       if (response.statusCode == 200) {
         dynamic jsonData = json.decode(response.body);
-        kullanicibilgim = kullanicibilgisi.fromJson(jsonData);
+        kullanicibilgim = Kullanicibilgisi.fromJson(jsonData);
       }
 
       final response1 = await http.post(Uri.parse(url), headers: headers, body: body1);
       print("response1${response1.body}");
       if (response1.statusCode == 200) {
         dynamic jsonData = json.decode(response1.body);
-        tesisbilgim = tesisbilgisi.fromJson(jsonData);
+        tesisbilgim = Tesisbilgisi.fromJson(jsonData);
       }
       final response2 = await http.post(Uri.parse(url), headers: headers, body: body2);
       print("response2${response2.body}");
       if (response2.statusCode == 200) {
         dynamic jsonData = json.decode(response2.body);
-        hizmetbilgim = hizmetbilgisi.fromJson(jsonData);
+        hizmetbilgim = Hizmetbilgisi.fromJson(jsonData);
       }
       /*for (var i = 0; i < hizmetbilgim!.length; i++) {
         DenemeCard gelen = DenemeCard();
@@ -147,26 +146,27 @@ class _ActiveAppointmentState extends State<ActiveAppointment> {
 
   @override
   void initState() {
-  init();
+    init();
     cardim = deneme();
     super.initState();
   }
 
-init ()async{
+  init() async {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-       provider = Provider.of<AppointmentProvider>(context, listen: false);
-       provider.fetchServices(24);
+      provider = Provider.of<AppointmentProvider>(context, listen: false);
+      provider.fetchServices(24);
       provider.fetchFacilities().catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Tesisler alınamadı: $error')),
         );
       });
     });
-  
-  
-  await deneme(); await fetchRandevuList(); setState(() {
-  
-});}
+
+    await deneme();
+    await fetchRandevuList();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -181,33 +181,36 @@ init ()async{
                 "Randevularınızı, randevu gününü başlangıç saatinden en geç 60 dakika öncesine kadar iptal edebilirsiniz",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: Colors.grey),
               ),
-            
+              Expanded(
+                child: aktifrandevular == null
+                    ? const Center(child: CircularProgressIndicator())
+                    : aktifrandevular!.isEmpty
+                        ? const Center(child: Text('Veri bulunamadı'))
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: aktifrandevular?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              final randevu = aktifrandevular?[index];
 
-                  Expanded(
-                    child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: aktifrandevular?.length??0,
-                                itemBuilder: (context, index) {
-                                
-                                  final randevu = aktifrandevular?[index];
-                                  
-                               
-                                  return AppointmentCard(
-                                    buttonText: "Randevuyu iptal et!",
-                                    title: provider.facilities.where((e)=>e.tesisId==randevu?.tesisId).first.tesisAd??"",// appointment?.tesisbilgisimodel?.tesisAd ??"",
-                                    subtitle: provider.services.isEmpty==true? "": provider.services .where((e)=>e.hizmetId==randevu?.hizmetId).first.hizmetAd??"", // appointment?.hizmetbilgisimodel?.hizmetAd ??"",
-                                    date: randevu?.baslangicTarihi?.split(" ").first.toString() ?? "boş",
-                                    startTime:
-                                        "${randevu?.baslangicTarihi?.split(" ").last ?? "boş"}-${randevu?.bitisTarihi?.split(" ").last ?? ""}",
-                                    endTime: randevu?.bitisTarihi?.split(" ").first ?? "",
-                                    onButtonPressed: () {
-                                      // Randevuya tıklama işlemi
-                                    },
-                                  );
+                              return AppointmentCard(
+                                buttonText: "Randevuyu iptal et!",
+                                title: provider.facilities.where((e) => e.tesisId == randevu?.tesisId).first.tesisAd ??
+                                    "", // appointment?.tesisbilgisimodel?.tesisAd ??"",
+                                subtitle: provider.services.isEmpty == true
+                                    ? ""
+                                    : provider.services.where((e) => e.hizmetId == randevu?.hizmetId).first.hizmetAd ??
+                                        "", // appointment?.hizmetbilgisimodel?.hizmetAd ??"",
+                                date: randevu?.baslangicTarihi?.split(" ").first.toString() ?? "boş",
+                                startTime: "${randevu?.baslangicTarihi?.split(" ").last ?? "boş"}-${randevu?.bitisTarihi?.split(" ").last ?? ""}",
+                                endTime: randevu?.bitisTarihi?.split(" ").first ?? "",
+                                onButtonPressed: () {
+                                  // Randevuya tıklama işlemi
                                 },
-                              ),
-                  ),
-                        
+                              );
+                            },
+                          ),
+              ),
+
               // Randevu kartlarını listele
             ],
           ),

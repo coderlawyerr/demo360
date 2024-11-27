@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:armiyaapp/model/new_model/newmodel.dart';
 
-class hizmetbilgisi {
+class Hizmetbilgisi {
   int? hizmetId;
   String? hizmetAd;
   String? hizmetTuru;
@@ -21,7 +21,7 @@ class hizmetbilgisi {
   int? cikisKontrolu;
   int? aktif;
 
-  hizmetbilgisi(
+  Hizmetbilgisi(
       {this.hizmetId,
       this.hizmetAd,
       this.hizmetTuru,
@@ -40,9 +40,9 @@ class hizmetbilgisi {
       this.cikisKontrolu,
       this.aktif});
 
-  hizmetbilgisi.fromJson(Map<String, dynamic> json) {
-  List randevuZamanlayici1 =jsonDecode(json['randevu_zamanlayici']);
-  Map<String,dynamic> randevuJson=  randevuZamanlayici1?.first ??{} ;
+  Hizmetbilgisi.fromJson(Map<String, dynamic> json) {
+    List randevuZamanlayici1 = jsonDecode(json['randevu_zamanlayici']);
+    Map<String, dynamic> randevuJson = randevuZamanlayici1.first ?? {};
     hizmetId = json['hizmet_id'];
     hizmetAd = json['hizmet_ad'];
     hizmetTuru = json['hizmet_turu'];

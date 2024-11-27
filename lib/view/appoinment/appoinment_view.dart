@@ -309,20 +309,22 @@ class _AppointmentViewState extends State<AppointmentView> {
                                             final formattedEndTime = DateFormat('HH:mm').format(bitisSaati);
 
                                             // Onaylanan saat kontrolü
-                                            bool isDisabled = provider.confirmedTimeSlot != null &&
-                                                provider.confirmedTimeSlot != timeSlot; // Eğer başka bir saat onaylandıysa, diğer saatleri devre dışı bırak
+                                            bool isDisabled = provider.kontrolEt(serviceId).values.any((c) => c.value == Colors.green.value) &&
+                                                provider.slotColors[formattedStartTime]?.value !=
+                                                    Colors.green.value; // Eğer başka bir saat onaylandıysa, diğer saatleri devre dışı bırak
                                             // Geçmiş saat dilimlerini kontrol et
                                             bool isPast = timeSlot.isBefore(DateTime.now());
 
                                             // Renk haritasına göre rengi belirle
                                             // Renk haritasına göre rengi belirle
-                                            final slotColor = provider.slotColors[formattedStartTime] ?? Colors.blue.shade100;
+                                            var slotColor = provider.slotColors[formattedStartTime] ?? Colors.blue.shade100;
+                                            if (isDisabled) slotColor = Colors.grey;
 
                                             return Opacity(
                                               opacity: isPast ? 0.5 : 1.0,
                                               child: GestureDetector(
                                                 ///////////////
-                                                onTap: isPast || slotColor == Colors.green || slotColor == Colors.red
+                                                onTap: isPast || slotColor == Colors.green || slotColor == Colors.red || slotColor == Colors.grey
                                                     ? null // Geçmiş saatler, kullanıcı tarafından alınmış ve başkaları tarafından alınmış saatler için tıklamayı devre dışı bırak
                                                     : () {
                                                         //
@@ -637,12 +639,12 @@ class _AppointmentViewState extends State<AppointmentView> {
                             final res = await createAppointment(
                               authorization: 'cm9vdEBnZWNpczM2MC5jb206MTIzNDEyMzQ=', // Authorization bilgisi
                               phpSessionId: '0ms1fk84dssk9s3mtfmmdsjq24', // PHPSESSID
-                              kullaniciId: user?.kullanicibilgisi?.id.toString() ?? "", // Kullanıcı ID
-                              token: user?.kullanicibilgisi?.token ?? '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', // Token
+                              kullaniciId: user?.id?.toString() ?? "", // Kullanıcı ID
+                              token: '71joQRTKKC5R86NccWJzClvNFuAj07w03rB', // Token
                               hizmetId: selectedHizmetID.toString(), //"25" // Hizmet ID
                               tesisId: selectedTesisID.toString(), // '1', // Tesis ID
-                              baslangicTarihi: selectedTime.toString().replaceAll("T", " ") ?? '2024-11-19 15:00', // Başlangıç tarihi
-                              bitisTarihi: selectedTime.toString().replaceAll("T", " ") ?? '2024-11-20 15:00',
+                              baslangicTarihi: selectedTime.toString().replaceAll("T", " "), // Başlangıç tarihi
+                              bitisTarihi: endTime.toString().replaceAll("T", " "),
                             );
                             // randevu bılgılerını guncelle
 

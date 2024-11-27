@@ -31,7 +31,7 @@ class AppointmentService {
         headers: {'Content-Type': 'application/x-www-form-urlencoded', 'Accept-CharSet': 'utf-8'},
         body: {
           'tesislergetir': '1',
-          'token': userModel?.kullanicibilgisi?.token ?? '71joQRTKKC5R86NccWJzClvNFuAj07w03rB',
+          'token': '71joQRTKKC5R86NccWJzClvNFuAj07w03rB',
         },
       );
 

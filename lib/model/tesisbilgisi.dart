@@ -1,4 +1,4 @@
-class tesisbilgisi {
+class Tesisbilgisi {
   int? tesisId;
   String? tesisAd;
   String? tesisTel;
@@ -13,7 +13,7 @@ class tesisbilgisi {
   Null? masterqr;
   int? aktif;
 
-  tesisbilgisi(
+  Tesisbilgisi(
       {this.tesisId,
       this.tesisAd,
       this.tesisTel,
@@ -28,7 +28,7 @@ class tesisbilgisi {
       this.masterqr,
       this.aktif});
 
-  tesisbilgisi.fromJson(Map<String, dynamic> json) {
+  Tesisbilgisi.fromJson(Map<String, dynamic> json) {
     tesisId = json['tesis_id'];
     tesisAd = json['tesis_ad'];
     tesisTel = json['tesis_tel'];

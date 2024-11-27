@@ -1,4 +1,4 @@
-class kullanicibilgisi {
+class Kullanicibilgisi {
   int? id;
   String? isimsoyisim;
   String? kullaniciadi;
@@ -74,7 +74,7 @@ class kullanicibilgisi {
   int? sifreDegistirildimi;
   String? girisHakki;
 
-  kullanicibilgisi(
+  Kullanicibilgisi(
       {this.id,
       this.isimsoyisim,
       this.kullaniciadi,
@@ -150,7 +150,7 @@ class kullanicibilgisi {
       this.sifreDegistirildimi,
       this.girisHakki});
 
-  kullanicibilgisi.fromJson(Map<String, dynamic> json) {
+  Kullanicibilgisi.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     isimsoyisim = json['isimsoyisim'];
     kullaniciadi = json['kullaniciadi'];

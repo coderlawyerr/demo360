@@ -29,7 +29,7 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
   void initState() {
     super.initState();
 
-    _setBrightness(1.0,true);
+    _setBrightness(1.0, true);
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _counter.value++;
@@ -48,8 +48,10 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
     _originalBrightness = await ScreenBrightness().application; // Mevcut parlaklığı al
   }
 
-  Future<void> _setBrightness(double brightness,isInitUser) async {
-    if(isInitUser){    user = await SharedDataService().getLoginData();}
+  Future<void> _setBrightness(double brightness, isInitUser) async {
+    if (isInitUser) {
+      user = await SharedDataService().getLoginData();
+    }
 
     await _getOriginalBrightness();
 
@@ -80,7 +82,7 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
         'x-requested-with': 'XMLHttpRequest',
       },
-      body: {'qrolustur': "true", 'id': user?.kullanicibilgisi?.id.toString()},
+      body: {'qrolustur': "true", 'id': user?.id?.toString()},
     );
 
     print('Response status: ${response.statusCode}');
@@ -90,12 +92,14 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
     if (response.statusCode == 200) {
       Map<String, dynamic> json = jsonDecode(response.body);
 
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        setState(() {
-        _imageUrl = json["link"];
-      });
-      },);
-      
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          if (mounted)
+            setState(() {
+              _imageUrl = json["link"];
+            });
+        },
+      );
     } else {
       print('Error: ${response.statusCode}');
     }
@@ -104,7 +108,7 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
   @override
   void dispose() {
     _timer?.cancel();
-    _setBrightness(0.1,false); // Varsayılan parlaklık seviyesine geri dön
+    _setBrightness(0.1, false); // Varsayılan parlaklık seviyesine geri dön
     super.dispose();
   }
 
@@ -128,15 +132,16 @@ class _QRImageFetcherState extends State<QRImageFetcher> {
             const SizedBox(
               height: 100,
             ),
-            ValueListenableBuilder(
-                valueListenable: _counter,
-                builder: (context, val, child) {
-                  return LinearProgressIndicator(
-                    value: 1 / 5 * val,
-                    color: Colors.yellow,
-                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF5664D9)),
-                  );
-                }),
+            if (_imageUrl != null)
+              ValueListenableBuilder(
+                  valueListenable: _counter,
+                  builder: (context, val, child) {
+                    return LinearProgressIndicator(
+                      value: 1 / 5 * val,
+                      color: Colors.yellow,
+                      valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF5664D9)),
+                    );
+                  }),
             const SizedBox(
               height: 10,
             ),

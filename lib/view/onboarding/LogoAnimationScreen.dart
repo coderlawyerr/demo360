@@ -1,5 +1,6 @@
 
 
+import 'package:armiyaapp/data/app_shared_preference.dart';
 import 'package:armiyaapp/view/home_page.dart';
 import 'package:armiyaapp/view/login.dart';
 import 'package:flutter/material.dart';
@@ -42,14 +43,17 @@ class _LogoAnimationScreenState extends State<LogoAnimationScreen> with SingleTi
     _controller.forward();
 
     // Animasyonun tamamlandığını dinlemek için listener ekleyelim
-    _controller.addStatusListener((status) {
+    _controller.addStatusListener((status)  {
       if (status == AnimationStatus.completed) {
         // Animasyon tamamlandı, yönlendirme işlemi yapalım
-        Future.delayed(Duration(seconds: 1), () {
+        Future.delayed(Duration(seconds: 1), () async {
           // Burada yeni sayfaya yönlendirme işlemi yapıyoruz
+
+          var user = await SharedDataService().getLoginData();
+          
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => LoginPage()), // Yeni sayfanın adı
+            MaterialPageRoute(builder: (context) => user == null ? LoginPage() : const HomePage()), // Yeni sayfanın adı
           );
         });
       }
