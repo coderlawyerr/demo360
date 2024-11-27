@@ -1,9 +1,9 @@
 import 'package:armiyaapp/providers/appoinment/appoinment_provider.dart';
 import 'package:armiyaapp/providers/appoinment/membergroups_provider.dart';
 import 'package:armiyaapp/providers/appoinment/misafir_add_provider.dart';
-import 'package:armiyaapp/view/appoinment/appoinment_view.dart';
+
 import 'package:armiyaapp/view/onboarding/onboarding_one.dart';
-import 'package:armiyaapp/view/qr_page.dart';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
